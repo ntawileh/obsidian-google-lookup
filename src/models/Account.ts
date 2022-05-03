@@ -1,4 +1,4 @@
-import { people_v1 } from 'googleapis';
+import { people_v1, calendar_v3 } from 'googleapis';
 
 export class GoogleAccount {
 	#credentialsFile: string;
@@ -6,6 +6,7 @@ export class GoogleAccount {
 	#accountName: string;
 
 	#peopleService: people_v1.People | undefined;
+	#calendarService: calendar_v3.Calendar | undefined;
 
 	static #allAccounts: Record<string, GoogleAccount> = {};
 
@@ -34,6 +35,14 @@ export class GoogleAccount {
 
 	public get peopleService() {
 		return this.#peopleService;
+	}
+
+	public set calendarService(service: calendar_v3.Calendar | undefined) {
+		this.#calendarService = service;
+	}
+
+	public get calendarService() {
+		return this.#calendarService;
 	}
 
 	static getAllAccounts() {

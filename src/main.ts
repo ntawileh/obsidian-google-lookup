@@ -1,7 +1,8 @@
-import { ExampleModal } from 'modal';
+import { PersonSuggestModal } from '@/person-modal';
 import { GoogleAccount } from 'models/Account';
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
-import { ExampleView, VIEW_TYPE_EXAMPLE } from 'view';
+import { App, MarkdownView, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { CalendarView, VIEW_TYPE_EXAMPLE } from '@/views/CalendarView';
+import { EventSuggestModal } from '@/calendar-modal';
 
 // Remember to rename these classes and interfaces!
 
@@ -19,7 +20,7 @@ export default class MyPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		this.registerView(VIEW_TYPE_EXAMPLE, (leaf) => new ExampleView(leaf));
+		this.registerView(VIEW_TYPE_EXAMPLE, (leaf) => new CalendarView(leaf));
 		// This creates an icon in the left ribbon.
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
 			// Called when the user clicks the icon.
@@ -40,7 +41,21 @@ export default class MyPlugin extends Plugin {
 				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
 				if (markdownView) {
 					if (!checking) {
-						new ExampleModal(this.app).open();
+						new PersonSuggestModal(this.app).open();
+					}
+					return true;
+				}
+			}
+		});
+
+		this.addCommand({
+			id: 'insert-google-calendar-info',
+			name: 'Insert Calendar Event Info',
+			checkCallback: (checking: boolean) => {
+				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
+				if (markdownView) {
+					if (!checking) {
+						new EventSuggestModal(this.app).open();
 					}
 					return true;
 				}

@@ -1,0 +1,68 @@
+import { google, calendar_v3 } from 'googleapis';
+import { getAuthClient } from './auth';
+import { EventResult } from '@/types';
+
+interface ServiceOptions {
+	credentialsFile: string;
+	tokenFile: string;
+}
+
+interface QueryOptions {
+	service: calendar_v3.Calendar;
+	accountName: string;
+}
+
+export const getCalendarService = async ({ credentialsFile, tokenFile }: ServiceOptions) => {
+	const auth = await getAuthClient(credentialsFile, tokenFile);
+
+	if (!auth) {
+		throw 'unable to get auth client';
+	}
+
+	return google.calendar({
+		version: 'v3',
+		auth
+	});
+};
+
+export const searchCalendarEvents = async (
+	query: moment.Moment,
+	{ service, accountName }: QueryOptions
+): Promise<EventResult[] | undefined> => {
+	const response = await service.events.list({
+		calendarId: 'primary',
+		maxAttendees: 10,
+		singleEvents: true,
+		maxResults: 12,
+		orderBy: 'startTime',
+		timeMin: query.startOf('day').format(),
+		timeMax: query.endOf('day').format()
+	});
+
+	if (response.status !== 200) {
+		console.warn(`error querying people api ${response.statusText}`);
+		return;
+	}
+	console.log(JSON.stringify(response.data, null, 2));
+
+	if (!response.data?.items || response.data?.items?.length === 0) {
+		return;
+	}
+
+	return response.data.items.map((item): EventResult => {
+		const { summary, description, htmlLink, organizer, start, end, attendees } = item;
+		return {
+			summary: summary || '',
+			description: description || '',
+			accountSource: accountName,
+			htmlLink,
+			organizer: organizer?.email || '',
+			startTime: start?.dateTime,
+			endTime: end?.dateTime,
+			attendees:
+				attendees?.map((a) => {
+					return { response: a.responseStatus, email: a.email };
+				}) || []
+		};
+	});
+};

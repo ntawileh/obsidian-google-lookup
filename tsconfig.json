@@ -11,6 +11,8 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react",
     "paths": {
       "@/*": ["./*"]
     },

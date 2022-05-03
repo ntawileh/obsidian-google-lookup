@@ -5,7 +5,9 @@ import { google, Common } from 'googleapis';
 const SCOPES = [
 	'https://www.googleapis.com/auth/contacts.readonly',
 	'https://www.googleapis.com/auth/contacts.other.readonly',
-	'https://www.googleapis.com/auth/directory.readonly'
+	'https://www.googleapis.com/auth/directory.readonly',
+	'https://www.googleapis.com/auth/calendar.readonly',
+	'https://www.googleapis.com/auth/calendar.events.readonly'
 ];
 
 type CallbackType = (auth: Common.OAuth2Client) => Promise<void>;

@@ -1,17 +1,17 @@
-import { getPeopleService, searchContactsAndDirectory } from '@/api/google/people-search';
+import { getCalendarService, searchCalendarEvents } from '@/api/google/calendar-search';
 import { GoogleAccount } from '@/models/Account';
 import { App, Notice, SuggestModal } from 'obsidian';
-import { PersonResult } from '@/types';
+import { EventResult } from '@/types';
 import { insertIntoEditorRange, maybeGetSelectedText, renameFile } from './utils';
-import { Person } from './models/Person';
+//import { Person } from './models/Person';
 
-export class ExampleModal extends SuggestModal<PersonResult> {
+export class EventSuggestModal extends SuggestModal<EventResult> {
 	#initialValue: string | undefined;
 	#firstOpen = true;
 
 	// Returns all available suggestions.
-	async getSuggestions(query: string): Promise<PersonResult[]> {
-		if (!this.#firstOpen && query.length < 3) {
+	async getSuggestions(query: string): Promise<EventResult[]> {
+		if (!this.#firstOpen && query.length < 6) {
 			return [];
 		}
 
@@ -23,14 +23,22 @@ export class ExampleModal extends SuggestModal<PersonResult> {
 		}
 
 		this.#firstOpen = false;
-		const results: PersonResult[] = [];
+
+		const queryMoment = window.moment(query);
+		if (!queryMoment.isValid()) {
+			return [];
+		}
+
+		console.log(queryMoment);
+
+		const results: EventResult[] = [];
 
 		for (const account of GoogleAccount.getAllAccounts()) {
-			if (!account.peopleService) {
+			if (!account.calendarService) {
 				continue;
 			}
-			const accountResults = await searchContactsAndDirectory(query, {
-				service: account.peopleService,
+			const accountResults = await searchCalendarEvents(queryMoment, {
+				service: account.calendarService,
 				accountName: account.accountName
 			});
 			if (accountResults) {
@@ -41,19 +49,22 @@ export class ExampleModal extends SuggestModal<PersonResult> {
 	}
 
 	// Renders each suggestion item.
-	renderSuggestion(person: PersonResult, el: HTMLElement) {
-		el.createEl('div', { text: person.displayNameLastFirst });
+	renderSuggestion(event: EventResult, el: HTMLElement) {
+		const startMoment = window.moment(event.startTime);
+		el.createEl('div', { text: event.summary });
 		el.createEl('small', {
-			text: `(${person.accountSource}) ${person.org?.title} ${person.emails ? person.emails[0] : ''}`
+			text: `@ ${startMoment.format('hh:mma')}, ${startMoment.fromNow()}`
 		});
 	}
 
 	// Perform action on the selected suggestion.
-	async onChooseSuggestion(person: PersonResult, evt: MouseEvent | KeyboardEvent) {
-		new Notice(`Inserted info for ${person.firstName}`);
+	async onChooseSuggestion(event: EventResult, evt: MouseEvent | KeyboardEvent) {
+		new Notice(`Inserted info for ${event.summary}`);
+		/**
 		const p = new Person(person);
 		insertIntoEditorRange(this.app, await p.generateFromTemplate(this.app));
 		await renameFile(app, p.makeTitle());
+		*/
 	}
 
 	setInitialValue() {
@@ -70,7 +81,7 @@ export class ExampleModal extends SuggestModal<PersonResult> {
 
 	async initServices() {
 		for (const account of GoogleAccount.getAllAccounts()) {
-			account.peopleService = await getPeopleService({
+			account.calendarService = await getCalendarService({
 				credentialsFile: account.credentialsFile,
 				tokenFile: account.tokenFile
 			});
@@ -80,7 +91,7 @@ export class ExampleModal extends SuggestModal<PersonResult> {
 	constructor(app: App) {
 		super(app);
 		this.emptyStateText = 'no results found';
-		this.setInstructions([{ command: 'search contact', purpose: 'you can search for contacts' }]);
+		this.setInstructions([{ command: 'search events', purpose: 'you can search for calendar events' }]);
 		this.setInitialValue();
 	}
 }
