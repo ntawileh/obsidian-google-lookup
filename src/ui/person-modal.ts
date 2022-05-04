@@ -2,14 +2,13 @@ import { getPeopleService, searchContactsAndDirectory } from '@/api/google/peopl
 import { GoogleAccount } from '@/models/Account';
 import { App, Notice, SuggestModal } from 'obsidian';
 import { PersonResult } from '@/types';
-import { insertIntoEditorRange, maybeGetSelectedText, renameFile } from './utils';
-import { Person } from './models/Person';
+import { insertIntoEditorRange, maybeGetSelectedText, renameFile } from '@/utils';
+import { Person } from '@/models/Person';
 
 export class PersonSuggestModal extends SuggestModal<PersonResult> {
 	#initialValue: string | undefined;
 	#firstOpen = true;
 
-	// Returns all available suggestions.
 	async getSuggestions(query: string): Promise<PersonResult[]> {
 		if (!this.#firstOpen && query.length < 3) {
 			return [];
@@ -40,7 +39,6 @@ export class PersonSuggestModal extends SuggestModal<PersonResult> {
 		return results ? results : [];
 	}
 
-	// Renders each suggestion item.
 	renderSuggestion(person: PersonResult, el: HTMLElement) {
 		el.createEl('div', { text: person.displayNameLastFirst });
 		el.createEl('small', {
@@ -48,7 +46,6 @@ export class PersonSuggestModal extends SuggestModal<PersonResult> {
 		});
 	}
 
-	// Perform action on the selected suggestion.
 	async onChooseSuggestion(person: PersonResult, evt: MouseEvent | KeyboardEvent) {
 		new Notice(`Inserted info for ${person.firstName}`);
 		const p = new Person(person);
@@ -80,7 +77,7 @@ export class PersonSuggestModal extends SuggestModal<PersonResult> {
 	constructor(app: App) {
 		super(app);
 		this.emptyStateText = 'no results found';
-		this.setInstructions([{ command: 'search contact', purpose: 'you can search for contacts' }]);
+		this.setInstructions([{ command: 'find contact', purpose: 'search by any contact keyword (first, last, email)' }]);
 		this.setInitialValue();
 	}
 }

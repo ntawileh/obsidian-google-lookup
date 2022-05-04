@@ -1,8 +1,8 @@
-import { PersonSuggestModal } from '@/person-modal';
+import { PersonSuggestModal } from '@/ui/person-modal';
 import { GoogleAccount } from 'models/Account';
 import { App, MarkdownView, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 import { CalendarView, VIEW_TYPE_EXAMPLE } from '@/views/CalendarView';
-import { EventSuggestModal } from '@/calendar-modal';
+import { EventSuggestModal } from '@/ui/calendar-modal';
 
 // Remember to rename these classes and interfaces!
 

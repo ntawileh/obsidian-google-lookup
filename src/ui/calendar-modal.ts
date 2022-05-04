@@ -2,14 +2,13 @@ import { getCalendarService, searchCalendarEvents } from '@/api/google/calendar-
 import { GoogleAccount } from '@/models/Account';
 import { App, Notice, SuggestModal } from 'obsidian';
 import { EventResult } from '@/types';
-import { insertIntoEditorRange, maybeGetSelectedText, renameFile } from './utils';
+import { insertIntoEditorRange, maybeGetSelectedText } from '@/utils';
 import { Event } from '@/models/Event';
 
 export class EventSuggestModal extends SuggestModal<EventResult> {
 	#initialValue: string | undefined;
 	#firstOpen = true;
 
-	// Returns all available suggestions.
 	async getSuggestions(query: string): Promise<EventResult[]> {
 		if (!this.#firstOpen && query.length < 6) {
 			return [];
@@ -48,7 +47,6 @@ export class EventSuggestModal extends SuggestModal<EventResult> {
 		return results ? results : [];
 	}
 
-	// Renders each suggestion item.
 	renderSuggestion(event: EventResult, el: HTMLElement) {
 		const startMoment = window.moment(event.startTime);
 		el.createEl('div', { text: event.summary });
@@ -57,7 +55,6 @@ export class EventSuggestModal extends SuggestModal<EventResult> {
 		});
 	}
 
-	// Perform action on the selected suggestion.
 	async onChooseSuggestion(event: EventResult, evt: MouseEvent | KeyboardEvent) {
 		new Notice(`Inserted info for ${event.summary}`);
 		const e = new Event(event);
@@ -88,7 +85,7 @@ export class EventSuggestModal extends SuggestModal<EventResult> {
 	constructor(app: App) {
 		super(app);
 		this.emptyStateText = 'no results found';
-		this.setInstructions([{ command: 'search events', purpose: 'you can search for calendar events' }]);
+		this.setInstructions([{ command: 'search by date', purpose: 'for example "2022-05-05"' }]);
 		this.setInitialValue();
 	}
 }
