@@ -42,6 +42,11 @@ export default class MyPlugin extends Plugin {
 
 		new GoogleAccount('Seek', '/Users/nadimtawileh/tmp/credentials.json', '/Users/nadimtawileh/tmp/token.json');
 		new GoogleAccount(
+			'Clover',
+			'/Users/nadimtawileh/tmp/credentials.json',
+			'/Users/nadimtawileh/tmp/token-clover.json'
+		);
+		new GoogleAccount(
 			'Personal',
 			'/Users/nadimtawileh/tmp/credentials.json',
 			'/Users/nadimtawileh/tmp/token-tawileh.json'
