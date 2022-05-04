@@ -3,7 +3,7 @@ import { GoogleAccount } from '@/models/Account';
 import { App, Notice, SuggestModal } from 'obsidian';
 import { EventResult } from '@/types';
 import { insertIntoEditorRange, maybeGetSelectedText, renameFile } from './utils';
-//import { Person } from './models/Person';
+import { Event } from '@/models/Event';
 
 export class EventSuggestModal extends SuggestModal<EventResult> {
 	#initialValue: string | undefined;
@@ -60,11 +60,8 @@ export class EventSuggestModal extends SuggestModal<EventResult> {
 	// Perform action on the selected suggestion.
 	async onChooseSuggestion(event: EventResult, evt: MouseEvent | KeyboardEvent) {
 		new Notice(`Inserted info for ${event.summary}`);
-		/**
-		const p = new Person(person);
-		insertIntoEditorRange(this.app, await p.generateFromTemplate(this.app));
-		await renameFile(app, p.makeTitle());
-		*/
+		const e = new Event(event);
+		insertIntoEditorRange(this.app, await e.generateFromTemplate(this.app));
 	}
 
 	setInitialValue() {
