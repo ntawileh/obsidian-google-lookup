@@ -2,6 +2,7 @@ import { PersonSuggestModal } from '@/ui/person-modal';
 import { GoogleAccount } from 'models/Account';
 import { App, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, SuggestModal } from 'obsidian';
 import { EventSuggestModal } from '@/ui/calendar-modal';
+import { Person } from './models/Person';
 
 // TODO: Remember to rename these classes and interfaces!
 
@@ -16,7 +17,7 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings | undefined;
 
-	addCommandIfMarkdownView<T extends SuggestModal<any>>(name: string, id: string, obj: T) {
+	addCommandIfMarkdownView(name: string, id: string, func: () => void) {
 		this.addCommand({
 			id,
 			name,
@@ -24,7 +25,7 @@ export default class MyPlugin extends Plugin {
 				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
 				if (markdownView) {
 					if (!checking) {
-						obj.open();
+						func();
 					}
 					return true;
 				}
@@ -35,8 +36,12 @@ export default class MyPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		this.addCommandIfMarkdownView('Insert Contact Info', 'insert-contact-info', new PersonSuggestModal(this.app));
-		this.addCommandIfMarkdownView('Insert Event Info', 'insert-event-info', new EventSuggestModal(this.app));
+		this.addCommandIfMarkdownView('Insert Contact Info', 'insert-contact-info', () => {
+			new PersonSuggestModal(this.app).open();
+		});
+		this.addCommandIfMarkdownView('Insert Event Info', 'insert-event-info', () => {
+			new EventSuggestModal(this.app).open();
+		});
 
 		this.addSettingTab(new SampleSettingTab(this.app, this));
 
