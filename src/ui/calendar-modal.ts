@@ -4,6 +4,7 @@ import { App, Notice, SuggestModal } from 'obsidian';
 import { EventResult } from '@/types';
 import { insertIntoEditorRange, maybeGetSelectedText } from '@/utils';
 import { Event } from '@/models/Event';
+import { AuthModal } from './auth-modal';
 
 export class EventSuggestModal extends SuggestModal<EventResult> {
 	#initialValue: string | undefined;
@@ -42,6 +43,11 @@ export class EventSuggestModal extends SuggestModal<EventResult> {
 			});
 			if (accountResults) {
 				results.push(...accountResults);
+			} else {
+				AuthModal.createAndOpenNewModal(this.app, account, async () => {
+					await this.initServices();
+				});
+				break;
 			}
 		}
 		return results ? results : [];

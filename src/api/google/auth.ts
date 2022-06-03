@@ -35,32 +35,41 @@ export const getAuthClient = async (credentialsFile: string, tokenFile: string) 
 	return oAuth2Client;
 };
 
-/**
- * Get and store new token after prompting for user authorization, and then
- * execute the given callback with the authorized OAuth2 client.
- * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
- * @param {getEventsCallback} callback The callback for the authorized client.
- */
-const getNewToken = async (oAuth2Client: Common.OAuth2Client, callback: CallbackType) => {
-	const TOKEN_PATH = '/Users/nadimtawileh/tmp/token.json';
-	const authUrl = oAuth2Client.generateAuthUrl({
-		access_type: 'offline',
-		scope: SCOPES
-	});
-	console.log('Authorize this app by visiting this url:', authUrl);
-	const rl = readline.createInterface({
-		input: process.stdin,
-		output: process.stdout
-	});
-	rl.question('Enter the code from that page here: ', (code) => {
-		rl.close();
+export const getAuthURL = async (credentialsFile: string): Promise<string | undefined> => {
+	try {
+		const content = await fs.readFile(credentialsFile);
+		const {
+			installed: { client_secret, client_id, redirect_uris }
+		} = JSON.parse(content.toString());
+		const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris);
+		const authUrl = oAuth2Client.generateAuthUrl({
+			access_type: 'offline',
+			scope: SCOPES,
+			//redirect_uri: 'urn:ietf:wg:oauth:2.0:oob'
+			redirect_uri: 'http://127.0.0.1:14149'
+		});
+		return authUrl;
+	} catch (err: any) {
+		console.error(`Error loading client secret file: ${err.message}`);
+		return;
+	}
+};
+
+export const writeTokenFile = async (credentialsFile: string, tokenFile: string, code: string) => {
+	try {
+		const content = await fs.readFile(credentialsFile);
+		const {
+			installed: { client_secret, client_id, redirect_uris }
+		} = JSON.parse(content.toString());
+		const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris);
 		oAuth2Client.getToken(code, async (err, token) => {
 			if (err || !token) return console.error('Error retrieving access token', err);
 			oAuth2Client.setCredentials(token);
-			// Store the token to disk for later program executions
-			await fs.writeFile(TOKEN_PATH, JSON.stringify(token));
-			console.log('Token stored to', TOKEN_PATH);
-			await callback(oAuth2Client);
+			await fs.writeFile(tokenFile, JSON.stringify(token));
+			console.log('Token stored to', tokenFile);
 		});
-	});
+	} catch (err: any) {
+		console.error(`Error loading client secret file: ${err.message}`);
+		return;
+	}
 };

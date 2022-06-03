@@ -4,6 +4,7 @@ import { App, Notice, SuggestModal } from 'obsidian';
 import { PersonResult } from '@/types';
 import { insertIntoEditorRange, maybeGetSelectedText, renameFile } from '@/utils';
 import { Person } from '@/models/Person';
+import { AuthModal } from './auth-modal';
 
 export class PersonSuggestModal extends SuggestModal<PersonResult> {
 	#initialValue: string | undefined;
@@ -34,6 +35,12 @@ export class PersonSuggestModal extends SuggestModal<PersonResult> {
 			});
 			if (accountResults) {
 				results.push(...accountResults);
+			} else {
+				AuthModal.createAndOpenNewModal(this.app, account, async () => {
+					await this.initServices();
+				});
+
+				break;
 			}
 		}
 		return results ? results : [];
