@@ -45,7 +45,6 @@ export default class MyPlugin extends Plugin {
 
 		this.addSettingTab(new SampleSettingTab(this.app, this));
 
-		new GoogleAccount('Seek', '/Users/nadimtawileh/tmp/credentials.json', '/Users/nadimtawileh/tmp/token.json');
 		new GoogleAccount(
 			'Clover',
 			'/Users/nadimtawileh/tmp/credentials.json',
