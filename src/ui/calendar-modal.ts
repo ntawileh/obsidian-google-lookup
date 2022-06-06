@@ -44,8 +44,8 @@ export class EventSuggestModal extends SuggestModal<EventResult> {
 			if (accountResults) {
 				results.push(...accountResults);
 			} else {
-				AuthModal.createAndOpenNewModal(this.app, account, async () => {
-					await this.initServices();
+				AuthModal.createAndOpenNewModal(this.app, account, () => {
+					this.close();
 				});
 				break;
 			}

@@ -36,8 +36,8 @@ export class PersonSuggestModal extends SuggestModal<PersonResult> {
 			if (accountResults) {
 				results.push(...accountResults);
 			} else {
-				AuthModal.createAndOpenNewModal(this.app, account, async () => {
-					await this.initServices();
+				AuthModal.createAndOpenNewModal(this.app, account, () => {
+					this.close();
 				});
 
 				break;
@@ -49,7 +49,9 @@ export class PersonSuggestModal extends SuggestModal<PersonResult> {
 	renderSuggestion(person: PersonResult, el: HTMLElement) {
 		el.createEl('div', { text: person.displayNameLastFirst });
 		el.createEl('small', {
-			text: `(${person.accountSource}) ${person.org?.title} ${person.emails ? person.emails[0] : ''}`
+			text: `(${person.accountSource}) ${person.org?.title ? person.org.title : ''} ${
+				person.emails ? person.emails[0] : ''
+			}`
 		});
 	}
 
