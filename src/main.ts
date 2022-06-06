@@ -1,21 +1,12 @@
 import { PersonSuggestModal } from '@/ui/person-modal';
 import { GoogleAccount } from 'models/Account';
-import { App, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, SuggestModal } from 'obsidian';
+import { MarkdownView, Plugin } from 'obsidian';
 import { EventSuggestModal } from '@/ui/calendar-modal';
-import { Person } from './models/Person';
+import { DEFAULT_SETTINGS, GoogleLookupSettingTab } from './settings';
+import { GoogleLookupPluginSettings } from './types';
 
-// TODO: Remember to rename these classes and interfaces!
-
-interface MyPluginSettings {
-	mySetting: string;
-}
-
-const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default'
-};
-
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings | undefined;
+export default class GoogleLookupPlugin extends Plugin {
+	settings: GoogleLookupPluginSettings | undefined;
 
 	addCommandIfMarkdownView(name: string, id: string, func: () => void) {
 		this.addCommand({
@@ -43,7 +34,7 @@ export default class MyPlugin extends Plugin {
 			new EventSuggestModal(this.app).open();
 		});
 
-		this.addSettingTab(new SampleSettingTab(this.app, this));
+		this.addSettingTab(new GoogleLookupSettingTab(this.app, this));
 
 		new GoogleAccount(
 			'Clover',
@@ -67,43 +58,5 @@ export default class MyPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
-	}
-}
-
-class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
-
-	constructor(app: App, plugin: MyPlugin) {
-		super(app, plugin);
-		this.plugin = plugin;
-	}
-
-	display(): void {
-		const { containerEl } = this;
-
-		containerEl.empty();
-
-		containerEl.createEl('h2', { text: 'Settings for my awesome plugin.' });
-
-		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc("It's a secret")
-			.addText((text) => {
-				if (!this.plugin.settings) {
-					return;
-				}
-				text
-					.setPlaceholder('Enter your secret')
-					.setValue(this.plugin.settings.mySetting)
-					.onChange(async (value) => {
-						console.log('Secret: ' + value);
-
-						if (!this.plugin.settings) {
-							return;
-						}
-						this.plugin.settings.mySetting = value;
-						await this.plugin.saveSettings();
-					});
-			});
 	}
 }
