@@ -1,4 +1,4 @@
-import { google, people_v1 } from 'googleapis';
+import { people_v1, people } from '@googleapis/people';
 import { getAuthClient } from './auth';
 import { PersonResult } from '@/types';
 
@@ -19,7 +19,7 @@ export const getPeopleService = async ({ credentialsFile, tokenFile }: ServiceOp
 		throw 'unable to get auth client';
 	}
 
-	return google.people({
+	return people({
 		version: 'v1',
 		auth
 	});
@@ -122,5 +122,26 @@ export const searchContacts = async (
 		});
 	} catch (err: any) {
 		console.error(`unable to query contact: ${err.message}`);
+	}
+};
+
+export const getAuthenticatedUserEmail = async ({ service }: QueryOptions): Promise<string | null | undefined> => {
+	try {
+		const response = await service.people.get({
+			resourceName: 'people/me',
+			personFields: 'names,nicknames,emailAddresses'
+		});
+
+		if (response.status !== 200) {
+			console.warn(`error querying people api ${response.statusText}`);
+			return;
+		}
+		console.log(JSON.stringify(response.data, null, 2));
+
+		if (response.data && response.data.emailAddresses) {
+			return response.data.emailAddresses[0].value;
+		}
+	} catch (err: any) {
+		console.error(`unable to query authenticated user: ${err.message}`);
 	}
 };

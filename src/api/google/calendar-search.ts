@@ -1,4 +1,4 @@
-import { google, calendar_v3 } from 'googleapis';
+import { calendar_v3, calendar } from '@googleapis/calendar';
 import { getAuthClient } from './auth';
 import { EventResult } from '@/types';
 
@@ -19,9 +19,9 @@ export const getCalendarService = async ({ credentialsFile, tokenFile }: Service
 		throw 'unable to get auth client';
 	}
 
-	return google.calendar({
+	return calendar({
 		version: 'v3',
-		auth
+		auth: auth
 	});
 };
 
