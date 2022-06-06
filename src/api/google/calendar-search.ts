@@ -1,19 +1,14 @@
 import { calendar_v3, calendar } from '@googleapis/calendar';
 import { getAuthClient } from './auth';
-import { EventResult } from '@/types';
-
-interface ServiceOptions {
-	credentialsFile: string;
-	tokenFile: string;
-}
+import { EventResult, GoogleServiceOptions } from '@/types';
 
 interface QueryOptions {
 	service: calendar_v3.Calendar;
 	accountName: string;
 }
 
-export const getCalendarService = async ({ credentialsFile, tokenFile }: ServiceOptions) => {
-	const auth = await getAuthClient(credentialsFile, tokenFile);
+export const getCalendarService = async ({ credentials, tokenFile }: GoogleServiceOptions) => {
+	const auth = await getAuthClient(credentials, tokenFile);
 
 	if (!auth) {
 		throw 'unable to get auth client';

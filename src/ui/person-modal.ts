@@ -77,7 +77,7 @@ export class PersonSuggestModal extends SuggestModal<PersonResult> {
 	async initServices() {
 		for (const account of GoogleAccount.getAllAccounts()) {
 			account.peopleService = await getPeopleService({
-				credentialsFile: account.credentialsFile,
+				credentials: GoogleAccount.credentials,
 				tokenFile: account.tokenFile
 			});
 		}

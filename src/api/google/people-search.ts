@@ -1,19 +1,14 @@
 import { people_v1, people } from '@googleapis/people';
 import { getAuthClient } from './auth';
-import { PersonResult } from '@/types';
-
-interface ServiceOptions {
-	credentialsFile: string;
-	tokenFile: string;
-}
+import { GoogleServiceOptions, PersonResult } from '@/types';
 
 interface QueryOptions {
 	service: people_v1.People;
 	accountName: string;
 }
 
-export const getPeopleService = async ({ credentialsFile, tokenFile }: ServiceOptions) => {
-	const auth = await getAuthClient(credentialsFile, tokenFile);
+export const getPeopleService = async ({ credentials, tokenFile }: GoogleServiceOptions) => {
+	const auth = await getAuthClient(credentials, tokenFile);
 
 	if (!auth) {
 		throw 'unable to get auth client';

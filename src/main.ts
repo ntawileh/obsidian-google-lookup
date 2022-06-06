@@ -4,6 +4,7 @@ import { MarkdownView, Plugin } from 'obsidian';
 import { EventSuggestModal } from '@/ui/calendar-modal';
 import { DEFAULT_SETTINGS, GoogleLookupSettingTab } from './settings';
 import { GoogleLookupPluginSettings } from './types';
+import { getGoogleCredentials } from './settings/google-credentials';
 
 export default class GoogleLookupPlugin extends Plugin {
 	settings: GoogleLookupPluginSettings | undefined;
@@ -36,16 +37,8 @@ export default class GoogleLookupPlugin extends Plugin {
 
 		this.addSettingTab(new GoogleLookupSettingTab(this.app, this));
 
-		new GoogleAccount(
-			'Clover',
-			'/Users/nadimtawileh/tmp/credentials.json',
-			'/Users/nadimtawileh/tmp/token-clover.json'
-		);
-		new GoogleAccount(
-			'Personal',
-			'/Users/nadimtawileh/tmp/credentials.json',
-			'/Users/nadimtawileh/tmp/token-tawileh.json'
-		);
+		new GoogleAccount('Clover', '/Users/nadimtawileh/tmp/token-clover.json');
+		new GoogleAccount('Personal', '/Users/nadimtawileh/tmp/token-tawileh.json');
 	}
 
 	onunload() {
@@ -54,9 +47,11 @@ export default class GoogleLookupPlugin extends Plugin {
 
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		GoogleAccount.credentials = getGoogleCredentials(this);
 	}
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+		GoogleAccount.credentials = getGoogleCredentials(this);
 	}
 }

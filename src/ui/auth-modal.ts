@@ -19,7 +19,7 @@ export class AuthModal extends Modal {
 	async onOpen() {
 		const { contentEl } = this;
 
-		const url = await getAuthURL(this.#account.credentialsFile);
+		const url = await getAuthURL(GoogleAccount.credentials);
 		this.#server = http
 			.createServer(async (req, res) => {
 				const re = /\/\?code=(\d\/[\w|-]*)&/;
@@ -38,7 +38,7 @@ export class AuthModal extends Modal {
 				res.statusCode = 404;
 				return res.end('Not found');
 			})
-			.listen(14149);
+			.listen(GoogleAccount.credentials.redirect_port);
 
 		contentEl.createEl('h3', { text: `login for Google account ${this.#account.accountName}` });
 		contentEl.createEl('a', { text: `click here to authenticate`, href: url });
@@ -57,9 +57,9 @@ export class AuthModal extends Modal {
 	public static createAndOpenNewModal(app: App, account: GoogleAccount, callback: () => void) {
 		new AuthModal(app, account, async (code) => {
 			new Notice(`Updated authentication token for Google account ${account.accountName}...`);
-			await writeTokenFile(account.credentialsFile, account.tokenFile, code);
+			await writeTokenFile(GoogleAccount.credentials, account.tokenFile, code);
 			account.peopleService = await getPeopleService({
-				credentialsFile: account.credentialsFile,
+				credentials: GoogleAccount.credentials,
 				tokenFile: account.tokenFile
 			});
 			const loggedInUser = await getAuthenticatedUserEmail({

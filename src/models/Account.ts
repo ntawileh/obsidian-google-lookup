@@ -1,8 +1,9 @@
+import { GoogleCredentials } from '@/types';
 import { calendar_v3 } from '@googleapis/calendar';
 import { people_v1 } from '@googleapis/people';
 
 export class GoogleAccount {
-	#credentialsFile: string;
+	static #credentials: GoogleCredentials;
 	#tokenFile: string;
 	#accountName: string;
 
@@ -11,11 +12,18 @@ export class GoogleAccount {
 
 	static #allAccounts: Record<string, GoogleAccount> = {};
 
-	constructor(name: string, credsFile: string, tokenFile: string) {
+	constructor(name: string, tokenFile: string) {
 		this.#accountName = name;
-		this.#credentialsFile = credsFile;
 		this.#tokenFile = tokenFile;
 		GoogleAccount.#allAccounts[name] = this;
+	}
+
+	public static get credentials() {
+		return GoogleAccount.#credentials;
+	}
+
+	public static set credentials(c: GoogleCredentials) {
+		GoogleAccount.#credentials = c;
 	}
 
 	public get tokenFile() {
@@ -28,10 +36,6 @@ export class GoogleAccount {
 
 	public set accountName(name: string) {
 		this.#accountName = name;
-	}
-
-	public get credentialsFile() {
-		return this.#credentialsFile;
 	}
 
 	public set peopleService(service: people_v1.People | undefined) {

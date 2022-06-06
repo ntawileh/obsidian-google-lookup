@@ -1,3 +1,4 @@
+import { GoogleCredentials } from '@/types';
 import * as fs from 'fs/promises';
 import { OAuth2Client } from 'google-auth-library';
 
@@ -10,14 +11,11 @@ const SCOPES = [
 	'https://www.googleapis.com/auth/userinfo.profile'
 ];
 
-export const getAuthClient = async (credentialsFile: string, tokenFile: string) => {
+export const getAuthClient = async (credentials: GoogleCredentials, tokenFile: string) => {
 	let oAuth2Client: OAuth2Client | undefined;
 
 	try {
-		const content = await fs.readFile(credentialsFile);
-		const {
-			installed: { client_secret, client_id, redirect_uris }
-		} = JSON.parse(content.toString());
+		const { client_id, client_secret, redirect_uris } = credentials;
 		oAuth2Client = new OAuth2Client(client_id, client_secret, redirect_uris);
 	} catch (err) {
 		console.warn(`Error loading client secret file: ${err}`);
@@ -33,18 +31,15 @@ export const getAuthClient = async (credentialsFile: string, tokenFile: string) 
 	return oAuth2Client;
 };
 
-export const getAuthURL = async (credentialsFile: string): Promise<string | undefined> => {
+export const getAuthURL = async (credentials: GoogleCredentials): Promise<string | undefined> => {
 	try {
-		const content = await fs.readFile(credentialsFile);
-		const {
-			installed: { client_secret, client_id, redirect_uris }
-		} = JSON.parse(content.toString());
+		const { client_id, client_secret, redirect_uris } = credentials;
 		const oAuth2Client = new OAuth2Client(client_id, client_secret, redirect_uris);
 		const authUrl = oAuth2Client.generateAuthUrl({
 			access_type: 'offline',
 			scope: SCOPES,
 			//redirect_uri: 'urn:ietf:wg:oauth:2.0:oob'
-			redirect_uri: 'http://127.0.0.1:14149'
+			redirect_uri: redirect_uris
 		});
 		return authUrl;
 	} catch (err: any) {
@@ -53,12 +48,9 @@ export const getAuthURL = async (credentialsFile: string): Promise<string | unde
 	}
 };
 
-export const writeTokenFile = async (credentialsFile: string, tokenFile: string, code: string) => {
+export const writeTokenFile = async (credentials: GoogleCredentials, tokenFile: string, code: string) => {
 	try {
-		const content = await fs.readFile(credentialsFile);
-		const {
-			installed: { client_secret, client_id, redirect_uris }
-		} = JSON.parse(content.toString());
+		const { client_id, client_secret, redirect_uris } = credentials;
 		const oAuth2Client = new OAuth2Client(client_id, client_secret, redirect_uris);
 		const token = await oAuth2Client.getToken(code);
 		await fs.writeFile(tokenFile, JSON.stringify(token.tokens));

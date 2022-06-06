@@ -82,7 +82,7 @@ export class EventSuggestModal extends SuggestModal<EventResult> {
 	async initServices() {
 		for (const account of GoogleAccount.getAllAccounts()) {
 			account.calendarService = await getCalendarService({
-				credentialsFile: account.credentialsFile,
+				credentials: GoogleAccount.credentials,
 				tokenFile: account.tokenFile
 			});
 		}
