@@ -1,4 +1,5 @@
-import { people_v1, calendar_v3 } from 'googleapis';
+import { calendar_v3 } from '@googleapis/calendar';
+import { people_v1 } from '@googleapis/people';
 
 export class GoogleAccount {
 	#credentialsFile: string;
@@ -23,6 +24,10 @@ export class GoogleAccount {
 
 	public get accountName() {
 		return this.#accountName;
+	}
+
+	public set accountName(name: string) {
+		this.#accountName = name;
 	}
 
 	public get credentialsFile() {

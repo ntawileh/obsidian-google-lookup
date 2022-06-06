@@ -2,6 +2,7 @@ import http from 'http';
 import { getAuthURL, writeTokenFile } from '@/api/google/auth';
 import { GoogleAccount } from '@/models/Account';
 import { App, Modal, Notice, Setting } from 'obsidian';
+import { getAuthenticatedUserEmail, getPeopleService } from '@/api/google/people-search';
 
 export class AuthModal extends Modal {
 	result: string | undefined;
@@ -39,7 +40,7 @@ export class AuthModal extends Modal {
 			})
 			.listen(14149);
 
-		contentEl.createEl('h3', { text: `login required for Google account ${this.#account.accountName}` });
+		contentEl.createEl('h3', { text: `login for Google account ${this.#account.accountName}` });
 		contentEl.createEl('a', { text: `click here to authenticate`, href: url });
 
 		contentEl.createEl('p', {
@@ -57,6 +58,18 @@ export class AuthModal extends Modal {
 		new AuthModal(app, account, async (code) => {
 			new Notice(`Updated authentication token for Google account ${account.accountName}...`);
 			await writeTokenFile(account.credentialsFile, account.tokenFile, code);
+			account.peopleService = await getPeopleService({
+				credentialsFile: account.credentialsFile,
+				tokenFile: account.tokenFile
+			});
+			const loggedInUser = await getAuthenticatedUserEmail({
+				service: account.peopleService,
+				accountName: account.accountName
+			});
+			if (loggedInUser) {
+				console.log(`setting account name to ${loggedInUser}`);
+				account.accountName = loggedInUser;
+			}
 			callback();
 		}).open();
 	}
