@@ -1,5 +1,5 @@
+import { GoogleAccount } from '@/models/Account';
 import { GoogleCredentials } from '@/types';
-import * as fs from 'fs/promises';
 import { OAuth2Client } from 'google-auth-library';
 
 const SCOPES = [
@@ -11,9 +11,13 @@ const SCOPES = [
 	'https://www.googleapis.com/auth/userinfo.profile'
 ];
 
-export const getAuthClient = async (credentials: GoogleCredentials, tokenFile: string) => {
+export const getAuthClient = async (credentials: GoogleCredentials, token: string | undefined) => {
 	let oAuth2Client: OAuth2Client | undefined;
 
+	if (!token) {
+		console.warn('called getAuthClient with empty token');
+		return;
+	}
 	try {
 		const { client_id, client_secret, redirect_uris } = credentials;
 		oAuth2Client = new OAuth2Client(client_id, client_secret, redirect_uris);
@@ -23,8 +27,9 @@ export const getAuthClient = async (credentials: GoogleCredentials, tokenFile: s
 	}
 
 	try {
-		const token = await fs.readFile(tokenFile);
-		oAuth2Client.setCredentials(JSON.parse(token.toString()));
+		//const token = await fs.readFile(tokenFile);
+		//oAuth2Client.setCredentials(JSON.parse(token.toString()));
+		oAuth2Client.setCredentials(JSON.parse(token));
 	} catch (err) {
 		console.warn(`Token file not found for account: ${err}`);
 	}
@@ -48,13 +53,13 @@ export const getAuthURL = async (credentials: GoogleCredentials): Promise<string
 	}
 };
 
-export const writeTokenFile = async (credentials: GoogleCredentials, tokenFile: string, code: string) => {
+export const writeTokenFile = async (credentials: GoogleCredentials, account: GoogleAccount, code: string) => {
 	try {
 		const { client_id, client_secret, redirect_uris } = credentials;
 		const oAuth2Client = new OAuth2Client(client_id, client_secret, redirect_uris);
 		const token = await oAuth2Client.getToken(code);
-		await fs.writeFile(tokenFile, JSON.stringify(token.tokens));
-		console.log('Token stored to', tokenFile);
+		console.log(`Saved ${account.accountName} account info`);
+		return JSON.stringify(token.tokens);
 	} catch (err: any) {
 		console.error(`Error loading client secret file: ${err.message}`);
 		return;

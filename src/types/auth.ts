@@ -7,5 +7,5 @@ export type GoogleCredentials = {
 
 export type GoogleServiceOptions = {
 	credentials: GoogleCredentials;
-	tokenFile: string;
+	token?: string;
 };

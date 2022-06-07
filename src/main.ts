@@ -37,8 +37,7 @@ export default class GoogleLookupPlugin extends Plugin {
 
 		this.addSettingTab(new GoogleLookupSettingTab(this.app, this));
 
-		new GoogleAccount('Clover', '/Users/nadimtawileh/tmp/token-clover.json');
-		new GoogleAccount('Personal', '/Users/nadimtawileh/tmp/token-tawileh.json');
+		GoogleAccount.loadAccountsFromStorage();
 	}
 
 	onunload() {

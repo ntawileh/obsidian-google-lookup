@@ -7,22 +7,19 @@ import { Person } from '@/models/Person';
 import { AuthModal } from './auth-modal';
 
 export class PersonSuggestModal extends SuggestModal<PersonResult> {
-	#initialValue: string | undefined;
-	#firstOpen = true;
+	#initialQuery: string | undefined;
+	#ready = false;
 
 	async getSuggestions(query: string): Promise<PersonResult[]> {
-		if (!this.#firstOpen && query.length < 3) {
+		!this.#ready && (await this.initServices());
+		if (query.length === 0) {
+			query = this.#initialQuery ? this.#initialQuery : '';
+		}
+
+		if (query.length < 3) {
 			return [];
 		}
 
-		if (this.#firstOpen) {
-			await this.initServices();
-			if (this.#initialValue) {
-				query = this.#initialValue;
-			}
-		}
-
-		this.#firstOpen = false;
 		const results: PersonResult[] = [];
 
 		for (const account of GoogleAccount.getAllAccounts()) {
@@ -62,31 +59,33 @@ export class PersonSuggestModal extends SuggestModal<PersonResult> {
 		await renameFile(app, p.makeTitle());
 	}
 
-	setInitialValue() {
-		const selectedText = maybeGetSelectedText(this.app);
-		if (selectedText) {
-			this.#initialValue = selectedText;
-			return;
-		}
-		const fileName = this.app.workspace.getActiveFile()?.basename;
-		if (fileName) {
-			this.#initialValue = fileName;
-		}
-	}
-
-	async initServices() {
+	private async initServices() {
 		for (const account of GoogleAccount.getAllAccounts()) {
-			account.peopleService = await getPeopleService({
-				credentials: GoogleAccount.credentials,
-				tokenFile: account.tokenFile
-			});
+			if (account.token) {
+				account.peopleService = await getPeopleService({
+					credentials: GoogleAccount.credentials,
+					token: account.token
+				});
+			}
 		}
+		this.#ready = true;
 	}
 
 	constructor(app: App) {
 		super(app);
-		this.emptyStateText = 'no results found';
-		this.setInstructions([{ command: 'find contact', purpose: 'search by any contact keyword (first, last, email)' }]);
-		this.setInitialValue();
+		this.emptyStateText =
+			GoogleAccount.getAllAccounts().length > 0
+				? 'no results found yet'
+				: 'no accounts have been added yet.  go to settings to create.';
+		this.setInstructions([
+			{
+				command: 'find contact',
+				purpose: 'search by any contact keyword (first, last, email).  Requires at least 3 characters.'
+			}
+		]);
+		const selectedText = maybeGetSelectedText(this.app);
+		const fileName = this.app.workspace.getActiveFile()?.basename;
+
+		this.#initialQuery = selectedText ? selectedText : fileName ? fileName : undefined;
 	}
 }

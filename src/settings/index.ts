@@ -1,6 +1,9 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
 import GoogleLookupPlugin from '@/main';
 import { GoogleLookupPluginSettings, KeysMatching } from '@/types';
+import { GoogleAccount } from '@/models/Account';
+import { AuthModal } from '@/ui/auth-modal';
+import { ConfirmModal } from '@/ui/confirm-modal';
 
 export const DEFAULT_SETTINGS: Partial<GoogleLookupPluginSettings> = {
 	client_redirect_uri_port: '42601',
@@ -23,10 +26,12 @@ type TextInputSettingParams = {
 
 export class GoogleLookupSettingTab extends PluginSettingTab {
 	plugin: GoogleLookupPlugin;
+	accountsEl: HTMLElement;
 
 	constructor(app: App, plugin: GoogleLookupPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
+		this.accountsEl = this.containerEl.createDiv();
 	}
 
 	display(): void {
@@ -77,8 +82,32 @@ export class GoogleLookupSettingTab extends PluginSettingTab {
 			key: 'client_redirect_uri_port'
 		});
 
-		containerEl.createEl('h3', { text: 'Advanced Settings' });
+		containerEl.createEl('h3', { text: 'Accounts' });
+		this.displayAccounts();
+		this.containerEl.appendChild(this.accountsEl);
 	}
+
+	private displayAccounts() {
+		const { accountsEl } = this;
+		accountsEl.empty();
+		for (const account of GoogleAccount.getAllAccounts()) {
+			this.insertAccountSetting({
+				name: account.accountName,
+				container: this.accountsEl,
+				account
+			});
+		}
+		new Setting(this.accountsEl).addButton((b) => {
+			b.setButtonText('Add Account');
+			b.setCta();
+			b.onClick(() => {
+				GoogleAccount.createNewAccount(this.plugin.app, () => {
+					this.displayAccounts();
+				});
+			});
+		});
+	}
+
 	private insertTextInputSetting({
 		container = this.containerEl,
 		placeholder,
@@ -107,6 +136,39 @@ export class GoogleLookupSettingTab extends PluginSettingTab {
 				tc.setValue(this.plugin.settings![key]).onChange(async (v) => {
 					this.plugin.settings![key] = v;
 					await this.plugin.saveSettings();
+				});
+			});
+	}
+	private insertAccountSetting({
+		container = this.containerEl,
+		name,
+		account
+	}: {
+		container?: HTMLElement;
+		name: string;
+		account: GoogleAccount;
+	}) {
+		new Setting(container)
+			.setName(name)
+			.addExtraButton((b) => {
+				b.setIcon('reset');
+				b.setTooltip('refresh account credentials');
+				b.onClick(() => {
+					AuthModal.createAndOpenNewModal(this.app, account, () => {
+						this.displayAccounts();
+					});
+				});
+			})
+			.addExtraButton((b) => {
+				b.setIcon('trash');
+				b.setTooltip('remove account and delete login credentials');
+				b.onClick(() => {
+					new ConfirmModal(this.app, `Are you sure you want to remove account ${account.accountName}?`, () => {
+						console.log(`removing account ${account.accountName}`);
+						account.removeFromAccountsList();
+						GoogleAccount.writeAccountsToStorage();
+						this.displayAccounts();
+					}).open();
 				});
 			});
 	}

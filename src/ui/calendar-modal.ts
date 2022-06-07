@@ -1,35 +1,26 @@
 import { getCalendarService, searchCalendarEvents } from '@/api/google/calendar-search';
 import { GoogleAccount } from '@/models/Account';
-import { App, Notice, SuggestModal } from 'obsidian';
+import { App, moment, Notice, SuggestModal } from 'obsidian';
 import { EventResult } from '@/types';
 import { insertIntoEditorRange, maybeGetSelectedText } from '@/utils';
 import { Event } from '@/models/Event';
 import { AuthModal } from './auth-modal';
 
 export class EventSuggestModal extends SuggestModal<EventResult> {
-	#initialValue: string | undefined;
-	#firstOpen = true;
+	#initialQuery: moment.Moment;
+	#ready = false;
 
 	async getSuggestions(query: string): Promise<EventResult[]> {
-		if (!this.#firstOpen && query.length < 6) {
+		!this.#ready && (await this.initServices());
+
+		if (query.length > 0 && query.length < 6) {
 			return [];
 		}
 
-		if (this.#firstOpen) {
-			await this.initServices();
-			if (this.#initialValue) {
-				query = this.#initialValue;
-			}
-		}
-
-		this.#firstOpen = false;
-
-		const queryMoment = window.moment(query);
+		const queryMoment = query.length < 1 ? this.#initialQuery : moment(query);
 		if (!queryMoment.isValid()) {
 			return [];
 		}
-
-		console.log(queryMoment);
 
 		const results: EventResult[] = [];
 
@@ -67,31 +58,35 @@ export class EventSuggestModal extends SuggestModal<EventResult> {
 		insertIntoEditorRange(this.app, await e.generateFromTemplate(this.app));
 	}
 
-	setInitialValue() {
-		const selectedText = maybeGetSelectedText(this.app);
-		if (selectedText) {
-			this.#initialValue = selectedText;
-			return;
-		}
-		const fileName = this.app.workspace.getActiveFile()?.basename;
-		if (fileName) {
-			this.#initialValue = fileName;
-		}
-	}
-
-	async initServices() {
+	private async initServices() {
 		for (const account of GoogleAccount.getAllAccounts()) {
-			account.calendarService = await getCalendarService({
-				credentials: GoogleAccount.credentials,
-				tokenFile: account.tokenFile
-			});
+			if (account.token) {
+				account.calendarService = await getCalendarService({
+					credentials: GoogleAccount.credentials,
+					token: account.token
+				});
+			}
 		}
+		this.#ready = true;
 	}
 
 	constructor(app: App) {
 		super(app);
-		this.emptyStateText = 'no results found';
+		const selectedText = maybeGetSelectedText(this.app);
+		const fileName = this.app.workspace.getActiveFile()?.basename;
+
+		this.emptyStateText =
+			GoogleAccount.getAllAccounts().length > 0
+				? 'no results found yet'
+				: 'no accounts have been added yet.  go to settings to create.';
+
 		this.setInstructions([{ command: 'search by date', purpose: 'for example "2022-05-05"' }]);
-		this.setInitialValue();
+
+		this.#initialQuery =
+			selectedText && moment(selectedText).isValid()
+				? moment(selectedText)
+				: fileName && moment(fileName).isValid()
+				? moment(fileName)
+				: moment();
 	}
 }

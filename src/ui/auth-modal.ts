@@ -40,7 +40,9 @@ export class AuthModal extends Modal {
 			})
 			.listen(GoogleAccount.credentials.redirect_port);
 
-		contentEl.createEl('h3', { text: `login for Google account ${this.#account.accountName}` });
+		contentEl.createEl('h3', {
+			text: `login to Google account ${this.#account.accountName === 'NEW_ACCOUNT' ? '' : this.#account.accountName}`
+		});
 		contentEl.createEl('a', { text: `click here to authenticate`, href: url });
 
 		contentEl.createEl('p', {
@@ -57,10 +59,15 @@ export class AuthModal extends Modal {
 	public static createAndOpenNewModal(app: App, account: GoogleAccount, callback: () => void) {
 		new AuthModal(app, account, async (code) => {
 			new Notice(`Updated authentication token for Google account ${account.accountName}...`);
-			await writeTokenFile(GoogleAccount.credentials, account.tokenFile, code);
+
+			account.token = await writeTokenFile(GoogleAccount.credentials, account, code);
+			if (!account.token) {
+				console.error('could not get token for google account');
+				return;
+			}
 			account.peopleService = await getPeopleService({
 				credentials: GoogleAccount.credentials,
-				tokenFile: account.tokenFile
+				token: account.token
 			});
 			const loggedInUser = await getAuthenticatedUserEmail({
 				service: account.peopleService,
@@ -69,6 +76,8 @@ export class AuthModal extends Modal {
 			if (loggedInUser) {
 				console.log(`setting account name to ${loggedInUser}`);
 				account.accountName = loggedInUser;
+				account.addToAccountsList();
+				GoogleAccount.writeAccountsToStorage();
 			}
 			callback();
 		}).open();

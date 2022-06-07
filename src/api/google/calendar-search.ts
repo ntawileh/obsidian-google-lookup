@@ -7,12 +7,8 @@ interface QueryOptions {
 	accountName: string;
 }
 
-export const getCalendarService = async ({ credentials, tokenFile }: GoogleServiceOptions) => {
-	const auth = await getAuthClient(credentials, tokenFile);
-
-	if (!auth) {
-		throw 'unable to get auth client';
-	}
+export const getCalendarService = async ({ credentials, token }: GoogleServiceOptions) => {
+	const auth = await getAuthClient(credentials, token);
 
 	return calendar({
 		version: 'v3',

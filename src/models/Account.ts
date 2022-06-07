@@ -1,10 +1,12 @@
 import { GoogleCredentials } from '@/types';
+import { AuthModal } from '@/ui/auth-modal';
 import { calendar_v3 } from '@googleapis/calendar';
 import { people_v1 } from '@googleapis/people';
+import { App } from 'obsidian';
 
 export class GoogleAccount {
 	static #credentials: GoogleCredentials;
-	#tokenFile: string;
+	#token: string | undefined;
 	#accountName: string;
 
 	#peopleService: people_v1.People | undefined;
@@ -12,46 +14,17 @@ export class GoogleAccount {
 
 	static #allAccounts: Record<string, GoogleAccount> = {};
 
-	constructor(name: string, tokenFile: string) {
+	constructor(name: string, token: string | undefined) {
 		this.#accountName = name;
-		this.#tokenFile = tokenFile;
-		GoogleAccount.#allAccounts[name] = this;
+		this.#token = token;
 	}
 
-	public static get credentials() {
+	static get credentials() {
 		return GoogleAccount.#credentials;
 	}
 
-	public static set credentials(c: GoogleCredentials) {
+	static set credentials(c: GoogleCredentials) {
 		GoogleAccount.#credentials = c;
-	}
-
-	public get tokenFile() {
-		return this.#tokenFile;
-	}
-
-	public get accountName() {
-		return this.#accountName;
-	}
-
-	public set accountName(name: string) {
-		this.#accountName = name;
-	}
-
-	public set peopleService(service: people_v1.People | undefined) {
-		this.#peopleService = service;
-	}
-
-	public get peopleService() {
-		return this.#peopleService;
-	}
-
-	public set calendarService(service: calendar_v3.Calendar | undefined) {
-		this.#calendarService = service;
-	}
-
-	public get calendarService() {
-		return this.#calendarService;
 	}
 
 	static getAllAccounts() {
@@ -60,5 +33,71 @@ export class GoogleAccount {
 
 	static removeAllAccounts() {
 		GoogleAccount.#allAccounts = {};
+	}
+
+	static createNewAccount(app: App, callback: () => void) {
+		const account = new GoogleAccount('NEW_ACCOUNT', undefined);
+		AuthModal.createAndOpenNewModal(app, account, callback);
+	}
+
+	static writeAccountsToStorage() {
+		const accountsData: any = {};
+		for (const a of Object.values(GoogleAccount.#allAccounts)) {
+			accountsData[a.accountName] = a.token;
+		}
+		window.localStorage.setItem('google-lookup:accounts', JSON.stringify(accountsData));
+	}
+
+	static loadAccountsFromStorage() {
+		const storedValue = window.localStorage.getItem('google-lookup:accounts');
+		if (!storedValue) {
+			return;
+		}
+
+		const tokens = JSON.parse(storedValue);
+
+		for (const accountName of Object.keys(tokens)) {
+			new GoogleAccount(accountName, tokens[accountName]).addToAccountsList();
+		}
+	}
+	get token() {
+		return this.#token;
+	}
+	set token(t: string | undefined) {
+		this.#token = t;
+	}
+
+	get accountName() {
+		return this.#accountName;
+	}
+
+	set accountName(name: string) {
+		this.#accountName = name;
+	}
+
+	set peopleService(service: people_v1.People | undefined) {
+		this.#peopleService = service;
+	}
+
+	get peopleService() {
+		return this.#peopleService;
+	}
+
+	set calendarService(service: calendar_v3.Calendar | undefined) {
+		this.#calendarService = service;
+	}
+
+	get calendarService() {
+		return this.#calendarService;
+	}
+
+	addToAccountsList() {
+		GoogleAccount.#allAccounts[this.#accountName] = this;
+	}
+
+	removeFromAccountsList() {
+		GoogleAccount.#allAccounts = Object.fromEntries(
+			Object.entries(GoogleAccount.#allAccounts).filter((k) => k[0] !== this.#accountName)
+		);
 	}
 }
