@@ -1,19 +1,22 @@
+import { DEFAULT_PERSON_TEMPLATE } from '@/settings/default-templates';
 import { PersonResult } from '@/types';
 import { getTemplateContents } from '@/utils/template';
 import { App } from 'obsidian';
 
-const PERSON_TEMPLATE = '_assets/templates/t_person';
-
 export class Person {
 	#person: PersonResult;
+	#template: string | undefined;
 
-	constructor(p: PersonResult) {
+	constructor(p: PersonResult, templateFile: string | undefined) {
 		this.#person = p;
+		this.#template = templateFile;
 	}
 
 	generateFromTemplate = async (app: App) => {
-		const rawTemplate = await getTemplateContents(app, PERSON_TEMPLATE);
-		return this.applyTemplateTransformations(rawTemplate);
+		const rawTemplate = await getTemplateContents(app, this.#template);
+		return this.applyTemplateTransformations(
+			rawTemplate && rawTemplate.length > 0 ? rawTemplate : DEFAULT_PERSON_TEMPLATE
+		);
 	};
 
 	private applyTemplateTransformations = (rawTemplateContents: string): string => {

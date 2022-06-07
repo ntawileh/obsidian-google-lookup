@@ -9,6 +9,7 @@ export const DEFAULT_SETTINGS: Partial<GoogleLookupPluginSettings> = {
 	client_redirect_uri_port: '42601',
 	client_id: '651639932442-b5eo1a6f29i72ggu72h0vftuhtt2jtgg.apps.googleusercontent.com',
 	client_secret: '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',
+	folder_person: 'people',
 	rename_person_file: true
 };
 
@@ -43,7 +44,6 @@ export class GoogleLookupSettingTab extends PluginSettingTab {
 			return;
 		}
 
-		containerEl.createEl('h3', { text: 'General' });
 		containerEl.createEl('h3', { text: 'Templates' });
 		this.insertTextInputSetting({
 			name: 'Contact Template',
@@ -52,10 +52,19 @@ export class GoogleLookupSettingTab extends PluginSettingTab {
 			key: 'template_file_person'
 		});
 		this.insertToggleSetting({
-			name: 'Rename person file',
-			description: 'When enabled, this will rename the note to the name of the person that was imported',
+			name: 'Rename and move person file',
+			description:
+				'When enabled, this will rename the note to the name of the person that was imported and move the note into a folder',
 			key: 'rename_person_file'
 		});
+		this.insertTextInputSetting({
+			name: 'Folder for people notes',
+			description:
+				'When the above option is enabled, the person note will move to this folder.  Default value is "people"',
+			placeholder: 'people',
+			key: 'folder_person'
+		});
+
 		this.insertTextInputSetting({
 			name: 'Event Template',
 			description: 'Template for inserting event info.  Default template can be found here.',

@@ -1,7 +1,5 @@
 import { App, Editor, MarkdownView, TFile } from 'obsidian';
 
-const PEOPLE_DIR = 'people';
-
 const isViewInSourceMode = (app: App) => {
 	const view_mode = app.workspace.getActiveViewOfType(MarkdownView)?.getMode();
 	return view_mode && view_mode === 'source';
@@ -23,13 +21,13 @@ export const insertIntoEditorRange = (app: App, content: string) => {
 	editor.replaceRange(content, editor.getCursor());
 };
 
-export const renameFile = async (app: App, title: string) => {
+export const renameFile = async (app: App, title: string, folder: string) => {
 	const file: TFile | null = app.workspace.getActiveFile();
 	if (!file || !isViewInSourceMode(app)) {
 		return;
 	}
 
-	const newPath = `${PEOPLE_DIR}/${sanitizeHeading(title)}.md`;
+	const newPath = `${folder}/${sanitizeHeading(title)}.md`;
 	await app.fileManager.renameFile(file, newPath);
 };
 

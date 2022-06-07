@@ -29,10 +29,14 @@ export default class GoogleLookupPlugin extends Plugin {
 		await this.loadSettings();
 
 		this.addCommandIfMarkdownView('Insert Contact Info', 'insert-contact-info', () => {
-			new PersonSuggestModal(this.app).open();
+			new PersonSuggestModal(this.app, {
+				renameFile: this.settings!.rename_person_file,
+				template: this.settings!.template_file_person,
+				moveToFolder: this.settings!.folder_person
+			}).open();
 		});
 		this.addCommandIfMarkdownView('Insert Event Info', 'insert-event-info', () => {
-			new EventSuggestModal(this.app).open();
+			new EventSuggestModal(this.app, { template: this.settings!.template_file_event }).open();
 		});
 
 		this.addSettingTab(new GoogleLookupSettingTab(this.app, this));

@@ -6,9 +6,13 @@ import { insertIntoEditorRange, maybeGetSelectedText } from '@/utils';
 import { Event } from '@/models/Event';
 import { AuthModal } from './auth-modal';
 
+type ModalOptions = {
+	template: string | undefined;
+};
 export class EventSuggestModal extends SuggestModal<EventResult> {
 	#initialQuery: moment.Moment;
 	#ready = false;
+	#options: ModalOptions;
 
 	async getSuggestions(query: string): Promise<EventResult[]> {
 		!this.#ready && (await this.initServices());
@@ -54,7 +58,7 @@ export class EventSuggestModal extends SuggestModal<EventResult> {
 
 	async onChooseSuggestion(event: EventResult, evt: MouseEvent | KeyboardEvent) {
 		new Notice(`Inserted info for ${event.summary}`);
-		const e = new Event(event);
+		const e = new Event(event, this.#options.template);
 		insertIntoEditorRange(this.app, await e.generateFromTemplate(this.app));
 	}
 
@@ -70,10 +74,11 @@ export class EventSuggestModal extends SuggestModal<EventResult> {
 		this.#ready = true;
 	}
 
-	constructor(app: App) {
+	constructor(app: App, options: ModalOptions) {
 		super(app);
 		const selectedText = maybeGetSelectedText(this.app);
 		const fileName = this.app.workspace.getActiveFile()?.basename;
+		this.#options = options;
 
 		this.emptyStateText =
 			GoogleAccount.getAllAccounts().length > 0

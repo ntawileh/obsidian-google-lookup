@@ -1,14 +1,20 @@
 import { getPeopleService, searchContactsAndDirectory } from '@/api/google/people-search';
 import { GoogleAccount } from '@/models/Account';
-import { App, Notice, SuggestModal } from 'obsidian';
+import { App, Modal, Notice, SuggestModal } from 'obsidian';
 import { PersonResult } from '@/types';
 import { insertIntoEditorRange, maybeGetSelectedText, renameFile } from '@/utils';
 import { Person } from '@/models/Person';
 import { AuthModal } from './auth-modal';
 
+type ModalOptions = {
+	renameFile: boolean;
+	moveToFolder: string;
+	template: string | undefined;
+};
 export class PersonSuggestModal extends SuggestModal<PersonResult> {
 	#initialQuery: string | undefined;
 	#ready = false;
+	#options: ModalOptions;
 
 	async getSuggestions(query: string): Promise<PersonResult[]> {
 		!this.#ready && (await this.initServices());
@@ -54,9 +60,11 @@ export class PersonSuggestModal extends SuggestModal<PersonResult> {
 
 	async onChooseSuggestion(person: PersonResult, evt: MouseEvent | KeyboardEvent) {
 		new Notice(`Inserted info for ${person.firstName}`);
-		const p = new Person(person);
+		const p = new Person(person, this.#options.template);
 		insertIntoEditorRange(this.app, await p.generateFromTemplate(this.app));
-		await renameFile(app, p.makeTitle());
+		if (this.#options.renameFile) {
+			await renameFile(app, p.makeTitle(), this.#options.moveToFolder);
+		}
 	}
 
 	private async initServices() {
@@ -71,8 +79,9 @@ export class PersonSuggestModal extends SuggestModal<PersonResult> {
 		this.#ready = true;
 	}
 
-	constructor(app: App) {
+	constructor(app: App, options: ModalOptions) {
 		super(app);
+		this.#options = options;
 		this.emptyStateText =
 			GoogleAccount.getAllAccounts().length > 0
 				? 'no results found yet'

@@ -1,3 +1,4 @@
+import { DEFAULT_EVENT_TEMPLATE } from '@/settings/default-templates';
 import { EventResult } from '@/types';
 import { getTemplateContents } from '@/utils/template';
 import { App } from 'obsidian';
@@ -6,14 +7,18 @@ const EVENT_TEMPLATE = '_assets/templates/t_event';
 
 export class Event {
 	#event: EventResult;
+	#template: string | undefined;
 
-	constructor(e: EventResult) {
+	constructor(e: EventResult, templateFile: string | undefined) {
 		this.#event = e;
+		this.#template = templateFile;
 	}
 
 	generateFromTemplate = async (app: App) => {
-		const rawTemplate = await getTemplateContents(app, EVENT_TEMPLATE);
-		return this.applyTemplateTransformations(rawTemplate);
+		const rawTemplate = await getTemplateContents(app, this.#template);
+		return this.applyTemplateTransformations(
+			rawTemplate && rawTemplate.length > 0 ? rawTemplate : DEFAULT_EVENT_TEMPLATE
+		);
 	};
 
 	private applyTemplateTransformations = (rawTemplateContents: string): string => {
