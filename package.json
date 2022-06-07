@@ -1,15 +1,19 @@
 {
-	"name": "obsidian-google-contacts",
+	"name": "obsidian-google-calendar-contacts",
 	"version": "1.0.1",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "Import contact and calendar event information from your Google account",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
-		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production && cp src/styles.css manifest.json ./dist",
+		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production && cp manifest.json ./dist",
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
 	},
-	"keywords": [],
-	"author": "",
+	"keywords": [
+		"contacts",
+		"calendar",
+		"obsidian"
+	],
+	"author": "nadim@park5.io",
 	"license": "MIT",
 	"devDependencies": {
 		"@types/node": "^16.11.6",
