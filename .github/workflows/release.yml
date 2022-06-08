@@ -9,8 +9,10 @@ env:
   PLUGIN_NAME: obsidian-google-lookup
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js
