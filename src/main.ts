@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { PersonSuggestModal } from '@/ui/person-modal';
 import { GoogleAccount } from 'models/Account';
 import { MarkdownView, Plugin } from 'obsidian';

@@ -3,8 +3,6 @@ import { EventResult } from '@/types';
 import { getTemplateContents } from '@/utils/template';
 import { App } from 'obsidian';
 
-const EVENT_TEMPLATE = '_assets/templates/t_event';
-
 export class Event {
 	#event: EventResult;
 	#template: string | undefined;

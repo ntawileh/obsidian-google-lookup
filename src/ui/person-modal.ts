@@ -1,6 +1,6 @@
 import { getPeopleService, searchContactsAndDirectory } from '@/api/google/people-search';
 import { GoogleAccount } from '@/models/Account';
-import { App, Modal, Notice, SuggestModal } from 'obsidian';
+import { App, Notice, SuggestModal } from 'obsidian';
 import { PersonResult } from '@/types';
 import { insertIntoEditorRange, maybeGetSelectedText, renameFile } from '@/utils';
 import { Person } from '@/models/Person';

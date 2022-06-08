@@ -131,9 +131,11 @@ export class GoogleLookupSettingTab extends PluginSettingTab {
 				text
 					.setPlaceholder(placeholder ? placeholder : '')
 					.onChange(async (v) => {
+						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 						this.plugin.settings![key] = v;
 						await this.plugin.saveSettings();
 					})
+					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 					.setValue(this.plugin.settings![key] || '');
 			});
 	}
@@ -142,7 +144,9 @@ export class GoogleLookupSettingTab extends PluginSettingTab {
 			.setName(name)
 			.setDesc(description)
 			.addToggle((tc) => {
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 				tc.setValue(this.plugin.settings![key]).onChange(async (v) => {
+					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 					this.plugin.settings![key] = v;
 					await this.plugin.saveSettings();
 				});
