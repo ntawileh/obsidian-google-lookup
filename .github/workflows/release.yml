@@ -22,7 +22,7 @@ jobs:
         id: build
         run: |
           yarn
-          yarn run build --if-present
+          yarn run build
           ls
           echo "::set-output name=tag_name::$(git tag --sort version:refname | tail -n 1)"
           zip --junk-paths ${{ env.PLUGIN_NAME }} README.md dist/main.js dist/styles.css dist/manifest.json
