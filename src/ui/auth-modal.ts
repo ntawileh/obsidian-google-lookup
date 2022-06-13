@@ -1,7 +1,7 @@
 import http from 'http';
 import { getAuthURL, writeTokenFile } from '@/api/google/auth';
 import { GoogleAccount } from '@/models/Account';
-import { App, Modal, Notice, Setting } from 'obsidian';
+import { App, Modal, Notice } from 'obsidian';
 import { getAuthenticatedUserEmail, getPeopleService } from '@/api/google/people-search';
 
 export class AuthModal extends Modal {
@@ -51,7 +51,7 @@ export class AuthModal extends Modal {
 	}
 
 	onClose() {
-		let { contentEl } = this;
+		const { contentEl } = this;
 		this.#server?.close();
 		contentEl.empty();
 	}

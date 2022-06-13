@@ -1,4 +1,4 @@
-export interface PersonResult {
+export type PersonResult = {
 	type?: string;
 	displayNameLastFirst?: string;
 	firstName?: string;
@@ -10,4 +10,4 @@ export interface PersonResult {
 		department?: string | null;
 	};
 	accountSource: string;
-}
+};

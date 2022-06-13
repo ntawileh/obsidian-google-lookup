@@ -41,8 +41,6 @@ export const searchDirectory = async (
 			console.warn(`error querying people api ${response.statusText}`);
 			return;
 		}
-		console.log(JSON.stringify(response.data, null, 2));
-
 		if (!response.data?.people || response.data?.people?.length === 0) {
 			return [];
 		}
@@ -56,10 +54,7 @@ export const searchDirectory = async (
 				lastName: names && names[0].familyName ? names[0].familyName : 'unknown',
 				org:
 					organizations && organizations[0]
-						? {
-								department: organizations[0].department,
-								title: organizations[0].title
-						  }
+						? { department: organizations[0].department, title: organizations[0].title }
 						: undefined,
 				type: 'DIRECTORY',
 				emails: emailAddresses ? emailAddresses.map((e) => e.value) : [],
@@ -86,13 +81,12 @@ export const searchContacts = async (
 			console.warn(`error querying people api ${response.statusText}`);
 			return;
 		}
-		console.log(JSON.stringify(response.data, null, 2));
-
 		if (!response.data?.results || response.data?.results?.length === 0) {
 			return [];
 		}
 
 		return response.data.results.map((p): PersonResult => {
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			const { names, organizations, emailAddresses, phoneNumbers } = p.person!;
 			return {
 				accountSource: accountName,
@@ -101,10 +95,7 @@ export const searchContacts = async (
 				lastName: names && names[0].familyName ? names[0].familyName : 'unknown',
 				org:
 					organizations && organizations[0]
-						? {
-								department: organizations[0].department,
-								title: organizations[0].title
-						  }
+						? { department: organizations[0].department, title: organizations[0].title }
 						: undefined,
 				type: 'CONTACTS',
 				emails: emailAddresses ? emailAddresses.map((e) => e.value) : [],
@@ -127,7 +118,6 @@ export const getAuthenticatedUserEmail = async ({ service }: QueryOptions): Prom
 			console.warn(`error querying people api ${response.statusText}`);
 			return;
 		}
-		console.log(JSON.stringify(response.data, null, 2));
 
 		if (response.data && response.data.emailAddresses) {
 			return response.data.emailAddresses[0].value;

@@ -35,7 +35,6 @@ export const searchCalendarEvents = async (
 			console.warn(`error querying people api ${response.statusText}`);
 			return;
 		}
-		console.log(JSON.stringify(response.data, null, 2));
 
 		if (!response.data?.items || response.data?.items?.length === 0) {
 			return [];

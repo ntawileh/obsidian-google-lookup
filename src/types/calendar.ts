@@ -1,4 +1,4 @@
-export interface EventResult {
+export type EventResult = {
 	summary: string;
 	description: string;
 	accountSource: string;
@@ -10,4 +10,4 @@ export interface EventResult {
 	}[];
 	startTime: string | undefined | null;
 	endTime: string | undefined | null;
-}
+};

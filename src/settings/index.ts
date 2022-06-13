@@ -7,8 +7,6 @@ import { ConfirmModal } from '@/ui/confirm-modal';
 
 export const DEFAULT_SETTINGS: Partial<GoogleLookupPluginSettings> = {
 	client_redirect_uri_port: '42601',
-	client_id: '651639932442-b5eo1a6f29i72ggu72h0vftuhtt2jtgg.apps.googleusercontent.com',
-	client_secret: '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',
 	folder_person: 'people',
 	rename_person_file: true
 };
@@ -47,7 +45,10 @@ export class GoogleLookupSettingTab extends PluginSettingTab {
 		containerEl.createEl('h3', { text: 'Templates' });
 		this.insertTextInputSetting({
 			name: 'Contact Template',
-			description: 'Template for inserting contact info.  Default template can be found here.',
+			description: getDocumentFragmentWithLink(
+				'Default template and more info here',
+				'https://ntawileh.github.io/obsidian-google-lookup/person'
+			),
 			placeholder: '_assets/templates/t_person',
 			key: 'template_file_person'
 		});
@@ -67,7 +68,10 @@ export class GoogleLookupSettingTab extends PluginSettingTab {
 
 		this.insertTextInputSetting({
 			name: 'Event Template',
-			description: 'Template for inserting event info.  Default template can be found here.',
+			description: getDocumentFragmentWithLink(
+				'Default template and more info here',
+				'https://ntawileh.github.io/obsidian-google-lookup/event'
+			),
 			placeholder: '_assets/templates/t_event',
 			key: 'template_file_event'
 		});
@@ -186,3 +190,13 @@ export class GoogleLookupSettingTab extends PluginSettingTab {
 			});
 	}
 }
+
+const getDocumentFragmentWithLink = (text: string, href: string) => {
+	const fragment = document.createDocumentFragment();
+	fragment.createEl('a', {
+		href,
+		text
+	});
+
+	return fragment;
+};

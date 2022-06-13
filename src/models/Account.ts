@@ -5,6 +5,7 @@ import { people_v1 } from '@googleapis/people';
 import { App } from 'obsidian';
 
 export class GoogleAccount {
+	private static STORAGEKEY = 'google-lookup:accounts';
 	static #credentials: GoogleCredentials;
 	#token: string | undefined;
 	#accountName: string;
@@ -45,11 +46,11 @@ export class GoogleAccount {
 		for (const a of Object.values(GoogleAccount.#allAccounts)) {
 			accountsData[a.accountName] = a.token;
 		}
-		window.localStorage.setItem('google-lookup:accounts', JSON.stringify(accountsData));
+		window.localStorage.setItem(GoogleAccount.STORAGEKEY, JSON.stringify(accountsData));
 	}
 
 	static loadAccountsFromStorage() {
-		const storedValue = window.localStorage.getItem('google-lookup:accounts');
+		const storedValue = window.localStorage.getItem(GoogleAccount.STORAGEKEY);
 		if (!storedValue) {
 			return;
 		}

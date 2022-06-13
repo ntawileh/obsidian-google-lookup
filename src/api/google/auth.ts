@@ -27,8 +27,6 @@ export const getAuthClient = async (credentials: GoogleCredentials, token: strin
 	}
 
 	try {
-		//const token = await fs.readFile(tokenFile);
-		//oAuth2Client.setCredentials(JSON.parse(token.toString()));
 		oAuth2Client.setCredentials(JSON.parse(token));
 	} catch (err) {
 		console.warn(`Token file not found for account: ${err}`);
