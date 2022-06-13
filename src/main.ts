@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { PersonSuggestModal } from '@/ui/person-modal';
 import { GoogleAccount } from 'models/Account';
-import { MarkdownView, Plugin } from 'obsidian';
+import { Notice, Plugin } from 'obsidian';
 import { EventSuggestModal } from '@/ui/calendar-modal';
 import { DEFAULT_SETTINGS, GoogleLookupSettingTab } from './settings';
 import { GoogleLookupPluginSettings } from './types';
-import { getGoogleCredentials } from './settings/google-credentials';
+import { getGoogleCredentials, hasGoogleCredentials } from './settings/google-credentials';
 
 export default class GoogleLookupPlugin extends Plugin {
 	settings: GoogleLookupPluginSettings | undefined;
@@ -14,13 +14,12 @@ export default class GoogleLookupPlugin extends Plugin {
 		this.addCommand({
 			id,
 			name,
-			checkCallback: (checking: boolean) => {
-				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
-				if (markdownView) {
-					if (!checking) {
-						func();
-					}
-					return true;
+			editorCallback: () => {
+				if (!hasGoogleCredentials(this)) {
+					new Notice('Google credentials not set up yet.  Go to Settings to configure.');
+					return;
+				} else {
+					func();
 				}
 			}
 		});
