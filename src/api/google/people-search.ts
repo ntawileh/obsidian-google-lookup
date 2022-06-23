@@ -49,9 +49,9 @@ export const searchDirectory = async (
 			const { names, organizations, emailAddresses, phoneNumbers } = p;
 			return {
 				accountSource: accountName,
-				displayNameLastFirst: names && names[0].displayNameLastFirst ? names[0].displayNameLastFirst : 'unknown',
-				firstName: names && names[0].givenName ? names[0].givenName : 'unknown',
-				lastName: names && names[0].familyName ? names[0].familyName : 'unknown',
+				displayNameLastFirst: names?.[0]?.displayNameLastFirst ?? 'unknown',
+				firstName: names?.[0]?.givenName ?? 'unknown',
+				lastName: names?.[0]?.familyName ?? 'unknown',
 				org:
 					organizations && organizations[0]
 						? { department: organizations[0].department, title: organizations[0].title }
@@ -90,9 +90,9 @@ export const searchContacts = async (
 			const { names, organizations, emailAddresses, phoneNumbers } = p.person!;
 			return {
 				accountSource: accountName,
-				displayNameLastFirst: names && names[0].displayNameLastFirst ? names[0].displayNameLastFirst : 'unknown',
-				firstName: names && names[0].givenName ? names[0].givenName : 'unknown',
-				lastName: names && names[0].familyName ? names[0].familyName : 'unknown',
+				displayNameLastFirst: names?.[0]?.displayNameLastFirst ?? 'unknown',
+				firstName: names?.[0]?.givenName ?? 'unknown',
+				lastName: names?.[0]?.familyName ?? 'unknown',
 				org:
 					organizations && organizations[0]
 						? { department: organizations[0].department, title: organizations[0].title }
