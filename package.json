@@ -4,7 +4,8 @@
 	"description": "Import contact and calendar event information from your Google account",
 	"main": "main.js",
 	"scripts": {
-		"dev": "node esbuild.config.mjs",
+		"dev": "node esbuild.config.mjs && cp manifest.json ./src/styles.css ./dist",
+		"install": "./bin/copyToVault.sh",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production && cp manifest.json ./src/styles.css ./dist",
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
 	},
