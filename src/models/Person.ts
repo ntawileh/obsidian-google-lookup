@@ -1,7 +1,7 @@
 import { DEFAULT_PERSON_TEMPLATE } from '@/settings/default-templates';
 import { PersonResult } from '@/types';
 import { getTemplateContents } from '@/utils/template';
-import { App } from 'obsidian';
+import { App, moment } from 'obsidian';
 
 export class Person {
 	#person: PersonResult;
@@ -21,6 +21,7 @@ export class Person {
 
 	private applyTemplateTransformations = (rawTemplateContents: string): string => {
 		let templateContents = rawTemplateContents;
+		const now = moment();
 
 		const transform = {
 			firstName: this.#person.firstName || '',
@@ -40,8 +41,8 @@ export class Person {
 			templateContents = templateContents.replace(new RegExp(`{{\\s*${k}\\s*}}`, 'gi'), v);
 		}
 		templateContents = templateContents
-			.replace(/{{\s*date\s*}}/gi, window.moment().format('YYYY-MM-DD'))
-			.replace(/{{\s*time\s*}}/gi, window.moment().format('HH:mm'));
+			.replace(/{{\s*date\s*}}/gi, now.format('YYYY-MM-DD'))
+			.replace(/{{\s*time\s*}}/gi, now.format('HH:mm'));
 
 		return templateContents;
 	};

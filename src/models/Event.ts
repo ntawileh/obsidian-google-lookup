@@ -1,7 +1,7 @@
 import { DEFAULT_EVENT_TEMPLATE } from '@/settings/default-templates';
 import { EventResult } from '@/types';
 import { getTemplateContents } from '@/utils/template';
-import { App } from 'obsidian';
+import { App, moment } from 'obsidian';
 
 export class Event {
 	#event: EventResult;
@@ -21,7 +21,8 @@ export class Event {
 
 	private applyTemplateTransformations = (rawTemplateContents: string): string => {
 		let templateContents = rawTemplateContents;
-		const startMoment = window.moment(this.#event.startTime);
+		const startMoment = moment(this.#event.startTime);
+		const now = moment();
 
 		const transform = {
 			summary: this.#event.summary,
@@ -41,8 +42,8 @@ export class Event {
 			templateContents = templateContents.replace(new RegExp(`{{\\s*${k}\\s*}}`, 'gi'), v);
 		}
 		templateContents = templateContents
-			.replace(/{{\s*date\s*}}/gi, window.moment().format('YYYY-MM-DD'))
-			.replace(/{{\s*time\s*}}/gi, window.moment().format('HH:mm'));
+			.replace(/{{\s*date\s*}}/gi, now.format('YYYY-MM-DD'))
+			.replace(/{{\s*time\s*}}/gi, now.format('HH:mm'));
 
 		return templateContents;
 	};

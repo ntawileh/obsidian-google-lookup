@@ -87,11 +87,17 @@ export class EventSuggestModal extends SuggestModal<EventResult> {
 
 		this.setInstructions([{ command: 'search by date', purpose: 'for example "2022-05-05"' }]);
 
-		this.#initialQuery =
-			selectedText && moment(selectedText).isValid()
-				? moment(selectedText)
-				: fileName && moment(fileName).isValid()
-				? moment(fileName)
-				: moment();
+		for (const t of [selectedText, fileName]) {
+			if (!t) {
+				continue;
+			}
+			const m = moment(t);
+			if (m.isValid()) {
+				this.#initialQuery = m;
+				return;
+			}
+		}
+
+		this.#initialQuery = moment();
 	}
 }
