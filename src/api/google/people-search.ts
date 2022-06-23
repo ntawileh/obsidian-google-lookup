@@ -33,7 +33,7 @@ export const searchDirectory = async (
 	try {
 		const response = await service.people.searchDirectoryPeople({
 			query,
-			readMask: 'names,nicknames,emailAddresses,phoneNumbers,biographies,calendarUrls,organizations',
+			readMask: 'names,nicknames,emailAddresses,phoneNumbers,biographies,calendarUrls,organizations,metadata',
 			sources: ['DIRECTORY_SOURCE_TYPE_DOMAIN_CONTACT', 'DIRECTORY_SOURCE_TYPE_DOMAIN_PROFILE']
 		});
 
@@ -46,12 +46,14 @@ export const searchDirectory = async (
 		}
 
 		return response.data.people.map((p): PersonResult => {
-			const { names, organizations, emailAddresses, phoneNumbers } = p;
+			const { names, organizations, emailAddresses, phoneNumbers, resourceName } = p;
 			return {
 				accountSource: accountName,
+				resourceName,
 				displayNameLastFirst: names?.[0]?.displayNameLastFirst ?? 'unknown',
 				firstName: names?.[0]?.givenName ?? 'unknown',
 				lastName: names?.[0]?.familyName ?? 'unknown',
+				middleName: names?.[0]?.middleName ?? 'unknown',
 				org:
 					organizations && organizations[0]
 						? { department: organizations[0].department, title: organizations[0].title }
@@ -73,7 +75,7 @@ export const searchContacts = async (
 	try {
 		const response = await service.people.searchContacts({
 			query,
-			readMask: 'names,nicknames,emailAddresses,phoneNumbers,biographies,calendarUrls,organizations',
+			readMask: 'names,nicknames,emailAddresses,phoneNumbers,biographies,calendarUrls,organizations,metadata',
 			sources: ['READ_SOURCE_TYPE_CONTACT', 'READ_SOURCE_TYPE_PROFILE', 'READ_SOURCE_TYPE_DOMAIN_CONTACT']
 		});
 
@@ -87,12 +89,14 @@ export const searchContacts = async (
 
 		return response.data.results.map((p): PersonResult => {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			const { names, organizations, emailAddresses, phoneNumbers } = p.person!;
+			const { names, organizations, emailAddresses, phoneNumbers, resourceName } = p.person!;
 			return {
 				accountSource: accountName,
+				resourceName,
 				displayNameLastFirst: names?.[0]?.displayNameLastFirst ?? 'unknown',
 				firstName: names?.[0]?.givenName ?? 'unknown',
 				lastName: names?.[0]?.familyName ?? 'unknown',
+				middleName: names?.[0]?.middleName ?? 'unknown',
 				org:
 					organizations && organizations[0]
 						? { department: organizations[0].department, title: organizations[0].title }

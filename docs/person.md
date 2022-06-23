@@ -59,6 +59,7 @@ Fields are variables enclosed in `{{` `}}` and will be replaced when the content
 | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | firstName      |                                                                                                                                                                                                                |
 | lastName       |                                                                                                                                                                                                                |
+| middleName     |                                                                                                                                                                                                                |
 | firstLast      | "Firstname Lastname" ex: `Stewie Griffin`                                                                                                                                                                      |
 | lastFirst      | "Lastname, First" ex: `Griffin, Stewie`                                                                                                                                                                        |
 | title          | Person's title                                                                                                                                                                                                 |
@@ -68,6 +69,7 @@ Fields are variables enclosed in `{{` `}}` and will be replaced when the content
 | org.department | Person's department in company directory (if applicable)                                                                                                                                                       |
 | type           | Passed along from Google API. Possible values [here](https://developers.google.com/people/api/rest/v1/people#Person.SourceType). Useful to differentiate a contact vs. someone obtained from company directory |
 | source         | will return the google account from where this event was fetched                                                                                                                                               |
+| link           | will return the url, if available, to open the contact on Google Contacts                                                                                                                                      |
 
 ### Customizing Template
 

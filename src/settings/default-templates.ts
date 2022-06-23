@@ -15,6 +15,8 @@ created: ["{{date}} {{time}}"]
 Email: {{emails}}
 Phone: {{phones}}
 
+[open in Google contacts]({{link}})
+
 
 ----
 
