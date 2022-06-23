@@ -1,4 +1,4 @@
-import { App, Editor, MarkdownView, TFile } from 'obsidian';
+import { App, Editor, MarkdownView, Notice, TFile } from 'obsidian';
 
 const isViewInSourceMode = (view: MarkdownView | null) => {
 	const view_mode = view?.getMode();
@@ -28,8 +28,13 @@ export const renameFile = async (app: App, title: string, folder: string) => {
 		return;
 	}
 
-	const newPath = `${folder}/${sanitizeHeading(title)}.md`;
-	await app.fileManager.renameFile(file, newPath);
+	try {
+		const newPath = `${folder}/${sanitizeHeading(title)}.md`;
+		await app.fileManager.renameFile(file, newPath);
+	} catch (err: any) {
+		console.error(err.message);
+		new Notice(`unable to rename/move file - does the folder "${folder}" exist?`, 7000);
+	}
 };
 
 const sanitizeHeading = (text: string) => {
