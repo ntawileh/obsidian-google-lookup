@@ -1,21 +1,22 @@
 import { App, Editor, MarkdownView, TFile } from 'obsidian';
 
-const isViewInSourceMode = (app: App) => {
-	const view_mode = app.workspace.getActiveViewOfType(MarkdownView)?.getMode();
-	return view_mode && view_mode === 'source';
+const isViewInSourceMode = (view: MarkdownView | null) => {
+	const view_mode = view?.getMode();
+	return !!view_mode && view_mode === 'source';
 };
 
 export const maybeGetSelectedText = (app: App) => {
 	const view = app.workspace.getActiveViewOfType(MarkdownView);
-	if (!isViewInSourceMode(app)) {
+	if (!isViewInSourceMode(view)) {
 		return;
 	}
 	return view?.editor.getSelection();
 };
 
 export const insertIntoEditorRange = (app: App, content: string) => {
-	const editor: Editor | undefined = app.workspace.getActiveViewOfType(MarkdownView)?.editor;
-	if (!editor || !isViewInSourceMode(app)) {
+	const view = app.workspace.getActiveViewOfType(MarkdownView);
+	const editor: Editor | undefined = view?.editor;
+	if (!editor || !isViewInSourceMode(view)) {
 		return;
 	}
 	editor.replaceRange(content, editor.getCursor());
@@ -23,7 +24,7 @@ export const insertIntoEditorRange = (app: App, content: string) => {
 
 export const renameFile = async (app: App, title: string, folder: string) => {
 	const file: TFile | null = app.workspace.getActiveFile();
-	if (!file || !isViewInSourceMode(app)) {
+	if (!file || !isViewInSourceMode(app.workspace.getActiveViewOfType(MarkdownView))) {
 		return;
 	}
 
