@@ -3,6 +3,7 @@ export type PersonResult = {
 	displayNameLastFirst?: string;
 	firstName?: string;
 	lastName?: string;
+	middleName?: string;
 	emails?: (string | null | undefined)[];
 	phones?: (string | null | undefined)[];
 	org?: {
@@ -10,4 +11,5 @@ export type PersonResult = {
 		department?: string | null;
 	};
 	accountSource: string;
+	resourceName: string | undefined | null;
 };

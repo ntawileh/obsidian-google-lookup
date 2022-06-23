@@ -19,6 +19,14 @@ export class Person {
 		);
 	};
 
+	getContactUrl() {
+		if (!this.#person.resourceName) {
+			return 'unknown';
+		}
+
+		return this.#person.resourceName.replace('people/', 'https://contacts.google.com/person/');
+	}
+
 	private applyTemplateTransformations = (rawTemplateContents: string): string => {
 		let templateContents = rawTemplateContents;
 		const now = moment();
@@ -26,6 +34,7 @@ export class Person {
 		const transform = {
 			firstName: this.#person.firstName || '',
 			lastName: this.#person.lastName || '',
+			middleName: this.#person.middleName || '',
 			firstLast: `${this.#person.firstName}${this.#person.lastName}` || '',
 			lastFirst: `${this.#person.lastName}${this.#person.firstName}` || '',
 			title: `${this.#person.lastName}, ${this.#person.firstName}` || '',
@@ -34,6 +43,7 @@ export class Person {
 			'org.title': this.#person.org?.title || '',
 			'org.department': this.#person.org?.department || '',
 			type: this.#person.type,
+			link: this.getContactUrl(),
 			source: this.#person.accountSource.toLocaleLowerCase()
 		};
 
