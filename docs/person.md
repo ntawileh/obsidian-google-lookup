@@ -35,7 +35,7 @@ If the option to move/rename the note is enabled (default is enabled), after the
 aliases: ["{{lastfirst}}", "{{firstlast}}", "{{firstname}}.{{lastname}}", {{emails}}]
 created: ["{{date}} {{time}}"]
 ---
-# {{title}}
+# {{firstname}} {{lastname}}
 #person #person/{{source}}
 
 {{org.title}} {{org.department}}
