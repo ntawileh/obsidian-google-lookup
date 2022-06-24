@@ -62,7 +62,7 @@ export class GoogleLookupSettingTab extends PluginSettingTab {
 		this.insertTextInputSetting({
 			name: 'Folder for people notes',
 			description:
-				'When the above option is enabled, the person note will move to this folder.  Default value is "people"',
+				'When the above option is enabled, the person note will move to this folder.  An empty value (default) means the file will not move to any new directory',
 			placeholder: 'people',
 			key: 'folder_person'
 		});
