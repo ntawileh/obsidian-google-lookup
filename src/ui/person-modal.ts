@@ -10,6 +10,7 @@ type ModalOptions = {
 	renameFile: boolean;
 	moveToFolder: string;
 	template: string | undefined;
+	newFilenameTemplate: string | undefined;
 };
 export class PersonSuggestModal extends SuggestModal<PersonResult> {
 	#initialQuery: string | undefined;
@@ -60,10 +61,10 @@ export class PersonSuggestModal extends SuggestModal<PersonResult> {
 
 	async onChooseSuggestion(person: PersonResult, evt: MouseEvent | KeyboardEvent) {
 		new Notice(`Inserted info for ${person.firstName}`);
-		const p = new Person(person, this.#options.template);
+		const p = new Person(person, this.#options.template, this.#options.newFilenameTemplate);
 		insertIntoEditorRange(this.app, await p.generateFromTemplate(this.app));
 		if (this.#options.renameFile) {
-			await renameFile(app, p.makeTitle(), this.#options.moveToFolder);
+			await renameFile(app, p.getTitle(), this.#options.moveToFolder);
 		}
 	}
 

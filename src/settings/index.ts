@@ -7,7 +7,7 @@ import { ConfirmModal } from '@/ui/confirm-modal';
 
 export const DEFAULT_SETTINGS: Partial<GoogleLookupPluginSettings> = {
 	client_redirect_uri_port: '42601',
-	folder_person: 'people',
+	folder_person: '',
 	rename_person_file: true
 };
 
@@ -42,11 +42,12 @@ export class GoogleLookupSettingTab extends PluginSettingTab {
 			return;
 		}
 
-		containerEl.createEl('h3', { text: 'Templates' });
+		containerEl.createEl('h3', { text: 'Contact Info' });
 		this.insertTextInputSetting({
 			name: 'Contact Template',
 			description: getDocumentFragmentWithLink(
-				'Default template and more info here',
+				'File containing template content for contact info.  Default template and more info',
+				'available here',
 				'https://ntawileh.github.io/obsidian-google-lookup/person'
 			),
 			placeholder: '_assets/templates/t_person',
@@ -61,15 +62,27 @@ export class GoogleLookupSettingTab extends PluginSettingTab {
 		this.insertTextInputSetting({
 			name: 'Folder for people notes',
 			description:
-				'When the above option is enabled, the person note will move to this folder.  Default value is "people"',
+				'When the above option is enabled, the person note will move to this folder.  An empty value (default) means the file will not move to any new directory',
 			placeholder: 'people',
 			key: 'folder_person'
 		});
+		this.insertTextInputSetting({
+			name: 'Filename format for people notes',
+			description: getDocumentFragmentWithLink(
+				'When the option to move and rename is enabled, the person note will have a title based on this format.  Default value is "{{lastname}}, {firstname}".  See template options',
+				'here',
+				'https://ntawileh.github.io/obsidian-google-lookup/person'
+			),
 
+			placeholder: '{{lastname}}, {{firstname}}',
+			key: 'person_filename_format'
+		});
+		containerEl.createEl('h3', { text: 'Events Info' });
 		this.insertTextInputSetting({
 			name: 'Event Template',
 			description: getDocumentFragmentWithLink(
-				'Default template and more info here',
+				'File containing template content for events.  Default template and more info',
+				'available here',
 				'https://ntawileh.github.io/obsidian-google-lookup/event'
 			),
 			placeholder: '_assets/templates/t_event',
@@ -191,11 +204,12 @@ export class GoogleLookupSettingTab extends PluginSettingTab {
 	}
 }
 
-const getDocumentFragmentWithLink = (text: string, href: string) => {
+const getDocumentFragmentWithLink = (text: string, linkText: string, href: string) => {
 	const fragment = document.createDocumentFragment();
+	fragment.createSpan({ text: `${text} ` });
 	fragment.createEl('a', {
 		href,
-		text
+		text: linkText
 	});
 
 	return fragment;

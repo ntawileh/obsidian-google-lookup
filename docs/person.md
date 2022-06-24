@@ -15,8 +15,14 @@ When nothing has been input yet, the following criteria will be applied as defau
 
 If the option to move/rename the note is enabled (default is enabled), after the content from the person template is inserted:
 
-- the note will be renamed to the name of the person
-- the note will be moved to the directory specified in Settings
+- the note will be renamed according to the `filename format` option. the default here is `{{lastname}}, {{firstname}}`. Any field in the template fields listed below can be used
+- the note will be moved to the directory specified in Settings. By default, this is blank which means the file would be renamed but will not be moved to any other directory
+
+> If the first option below `Rename and move person file` is not enabled, the other two settings have no effect.
+
+> When specifying your own filename format, make sure you pick something that continues to be unique across several contacts. i.e. picking `{{firstname}}` is valid, but obviously will not work out well if you have two contacts with the same first name.
+
+> If you specify a directory to move the contact file to, make sure that directory exists!
 
 ![](images/person-move-settings.png)
 
@@ -62,7 +68,6 @@ Fields are variables enclosed in `{{` `}}` and will be replaced when the content
 | middleName     |                                                                                                                                                                                                                |
 | firstLast      | "Firstname Lastname" ex: `Stewie Griffin`                                                                                                                                                                      |
 | lastFirst      | "Lastname, First" ex: `Griffin, Stewie`                                                                                                                                                                        |
-| title          | Person's title                                                                                                                                                                                                 |
 | emails         | Email(s), joined by `,`                                                                                                                                                                                        |
 | phones         | Phone number(s), joined by `,`                                                                                                                                                                                 |
 | org.title      | Title of contact in company directory (if applicable)                                                                                                                                                          |

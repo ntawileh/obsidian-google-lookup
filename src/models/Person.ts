@@ -1,4 +1,4 @@
-import { DEFAULT_PERSON_TEMPLATE } from '@/settings/default-templates';
+import { DEFAULT_PERSON_FILENAME_FORMAT, DEFAULT_PERSON_TEMPLATE } from '@/settings/default-templates';
 import { PersonResult } from '@/types';
 import { getTemplateContents } from '@/utils/template';
 import { App, moment } from 'obsidian';
@@ -6,10 +6,12 @@ import { App, moment } from 'obsidian';
 export class Person {
 	#person: PersonResult;
 	#template: string | undefined;
+	#filenameTemplate: string | undefined;
 
-	constructor(p: PersonResult, templateFile: string | undefined) {
+	constructor(p: PersonResult, templateFile: string | undefined, filenameTemplate: string | undefined) {
 		this.#person = p;
 		this.#template = templateFile;
+		this.#filenameTemplate = filenameTemplate;
 	}
 
 	generateFromTemplate = async (app: App) => {
@@ -37,7 +39,6 @@ export class Person {
 			middleName: this.#person.middleName || '',
 			firstLast: `${this.#person.firstName}${this.#person.lastName}` || '',
 			lastFirst: `${this.#person.lastName}${this.#person.firstName}` || '',
-			title: `${this.#person.lastName}, ${this.#person.firstName}` || '',
 			emails: this.#person.emails?.join(',') || '',
 			phones: this.#person.phones?.join(',') || '',
 			'org.title': this.#person.org?.title || '',
@@ -57,8 +58,11 @@ export class Person {
 		return templateContents;
 	};
 
-	makeTitle = () => {
-		const { firstName, lastName } = this.#person;
-		return `${lastName}, ${firstName}`;
+	getTitle = () => {
+		return this.applyTemplateTransformations(
+			this.#filenameTemplate && this.#filenameTemplate.length > 0
+				? this.#filenameTemplate
+				: DEFAULT_PERSON_FILENAME_FORMAT
+		);
 	};
 }
