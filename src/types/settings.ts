@@ -4,6 +4,7 @@ export type GoogleLookupPluginSettings = {
 	client_redirect_uri_port: string;
 	template_file_person: string;
 	folder_person: string;
+	person_filename_format: string;
 	template_file_event: string;
 	rename_person_file: boolean;
 };

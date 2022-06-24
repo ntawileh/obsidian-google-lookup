@@ -32,7 +32,8 @@ export default class GoogleLookupPlugin extends Plugin {
 			new PersonSuggestModal(this.app, {
 				renameFile: this.settings!.rename_person_file,
 				template: this.settings!.template_file_person,
-				moveToFolder: this.settings!.folder_person
+				moveToFolder: this.settings!.folder_person,
+				newFilenameTemplate: this.settings!.person_filename_format
 			}).open();
 		});
 		this.addCommandIfMarkdownView('Insert Event Info', 'insert-event-info', () => {
