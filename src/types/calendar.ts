@@ -6,6 +6,7 @@ export type EventResult = {
 	organizer: string;
 	attendees: {
 		email: string | undefined | null;
+		name: string | undefined | null;
 		response: string | undefined | null;
 	}[];
 	startTime: string | undefined | null;
