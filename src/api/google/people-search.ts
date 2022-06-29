@@ -33,7 +33,7 @@ export const searchDirectory = async (
 	try {
 		const response = await service.people.searchDirectoryPeople({
 			query,
-			readMask: 'names,nicknames,emailAddresses,phoneNumbers,biographies,calendarUrls,organizations,metadata',
+			readMask: 'names,nicknames,emailAddresses,phoneNumbers,biographies,calendarUrls,organizations,metadata,birthdays',
 			sources: ['DIRECTORY_SOURCE_TYPE_DOMAIN_CONTACT', 'DIRECTORY_SOURCE_TYPE_DOMAIN_PROFILE']
 		});
 
@@ -46,7 +46,7 @@ export const searchDirectory = async (
 		}
 
 		return response.data.people.map((p): PersonResult => {
-			const { names, organizations, emailAddresses, phoneNumbers, resourceName } = p;
+			const { names, organizations, emailAddresses, phoneNumbers, resourceName, birthdays } = p;
 			return {
 				accountSource: accountName,
 				resourceName,
@@ -60,7 +60,8 @@ export const searchDirectory = async (
 						: undefined,
 				type: 'DIRECTORY',
 				emails: emailAddresses ? emailAddresses.map((e) => e.value) : [],
-				phones: phoneNumbers ? phoneNumbers.map((e) => e.value) : []
+				phones: phoneNumbers ? phoneNumbers.map((e) => e.value) : [],
+				birthdays: birthdays ? birthdays.map(({ date }) => (date ? `${date.year}-${date.month}-${date.day}` : '')) : []
 			};
 		});
 	} catch (err: any) {
@@ -75,7 +76,7 @@ export const searchContacts = async (
 	try {
 		const response = await service.people.searchContacts({
 			query,
-			readMask: 'names,nicknames,emailAddresses,phoneNumbers,biographies,calendarUrls,organizations,metadata',
+			readMask: 'names,nicknames,emailAddresses,phoneNumbers,biographies,calendarUrls,organizations,metadata,birthdays',
 			sources: ['READ_SOURCE_TYPE_CONTACT', 'READ_SOURCE_TYPE_PROFILE', 'READ_SOURCE_TYPE_DOMAIN_CONTACT']
 		});
 
@@ -89,7 +90,7 @@ export const searchContacts = async (
 
 		return response.data.results.map((p): PersonResult => {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			const { names, organizations, emailAddresses, phoneNumbers, resourceName } = p.person!;
+			const { names, organizations, emailAddresses, phoneNumbers, resourceName, birthdays } = p.person!;
 			return {
 				accountSource: accountName,
 				resourceName,
@@ -103,7 +104,8 @@ export const searchContacts = async (
 						: undefined,
 				type: 'CONTACTS',
 				emails: emailAddresses ? emailAddresses.map((e) => e.value) : [],
-				phones: phoneNumbers ? phoneNumbers.map((e) => e.value) : []
+				phones: phoneNumbers ? phoneNumbers.map((e) => e.value) : [],
+				birthdays: birthdays ? birthdays.map(({ date }) => (date ? `${date.year}-${date.month}-${date.day}` : '')) : []
 			};
 		});
 	} catch (err: any) {

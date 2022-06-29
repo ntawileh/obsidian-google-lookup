@@ -4,6 +4,7 @@ export type PersonResult = {
 	firstName?: string;
 	lastName?: string;
 	middleName?: string;
+	birthdays?: (string | null | undefined)[];
 	emails?: (string | null | undefined)[];
 	phones?: (string | null | undefined)[];
 	org?: {
