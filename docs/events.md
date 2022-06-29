@@ -30,15 +30,16 @@ The content above will be inserted for a selected event. To customize, create a 
 
 Fields are variables enclosed in `{{` `}}` and will be replaced when the content is generated.
 
-| Field       | Description                                                                                                                                                             |
-| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| start       | The event start time                                                                                                                                                    |
-| summary     | Event title                                                                                                                                                             |
-| description | Event description                                                                                                                                                       |
-| link        | This will produce a link to the Google calendar event. Useful to reference attachment in the event or other event info                                                  |
-| organizer   | The email of the event organizer                                                                                                                                        |
-| attendees   | Email(s) of all attendees, joined by `,`. If the attendee had declined the event, a `(x)` will appear near their email. A tentative response will have a `(?)` appended |
-| source      | will return the google account from where this event was fetched                                                                                                        |
+| Field          | Description                                                                                                                                                             |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| start          | The event start time                                                                                                                                                    |
+| summary        | Event title                                                                                                                                                             |
+| description    | Event description                                                                                                                                                       |
+| link           | This will produce a link to the Google calendar event. Useful to reference attachment in the event or other event info                                                  |
+| organizer      | The email of the event organizer                                                                                                                                        |
+| attendees      | Email(s) of all attendees, joined by `,`. If the attendee had declined the event, a `(x)` will appear near their email. A tentative response will have a `(?)` appended |
+| attendees.name | Similar to `attendees` but will replace the email with the name of the attendee. If the name is not available for an attendee, the email is returned instead.           |
+| source         | will return the google account from where this event was fetched                                                                                                        |
 
 ### Customizing Template
 

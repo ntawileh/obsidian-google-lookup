@@ -32,9 +32,17 @@ export class Event {
 			organizer: this.#event.organizer,
 			attendees: this.#event.attendees
 				.map((a) => {
-					return `${a.email} ${a.response === 'declined' ? '(x)' : a.response === 'tentative' ? '(?)' : ''}`;
+					return `${a.email}${a.response === 'declined' ? ' (x)' : a.response === 'tentative' ? ' (?)' : ''}`;
 				})
 				.join(', '),
+			'attendees.name': this.#event.attendees
+				.map((a) => {
+					return `${a.name ? a.name : a.email}${
+						a.response === 'declined' ? ' (x)' : a.response === 'tentative' ? ' (?)' : ''
+					}`;
+				})
+				.join(', '),
+
 			source: this.#event.accountSource.toLocaleLowerCase()
 		};
 

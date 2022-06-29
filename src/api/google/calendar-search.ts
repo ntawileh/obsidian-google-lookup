@@ -52,7 +52,7 @@ export const searchCalendarEvents = async (
 				endTime: end?.dateTime,
 				attendees:
 					attendees?.map((a) => {
-						return { response: a.responseStatus, email: a.email };
+						return { response: a.responseStatus, email: a.email, name: a.displayName };
 					}) || []
 			};
 		});
