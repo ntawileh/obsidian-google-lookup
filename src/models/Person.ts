@@ -41,6 +41,7 @@ export class Person {
 			lastFirst: `${this.#person.lastName}${this.#person.firstName}` || '',
 			emails: this.#person.emails?.join(',') || '',
 			phones: this.#person.phones?.join(',') || '',
+			birthdays: this.#person.birthdays?.join(',') || '',
 			'org.title': this.#person.org?.title || '',
 			'org.department': this.#person.org?.department || '',
 			type: this.#person.type,
