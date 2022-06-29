@@ -51,9 +51,9 @@ export const searchDirectory = async (
 				accountSource: accountName,
 				resourceName,
 				displayNameLastFirst: names?.[0]?.displayNameLastFirst ?? 'unknown',
-				firstName: names?.[0]?.givenName ?? 'unknown',
-				lastName: names?.[0]?.familyName ?? 'unknown',
-				middleName: names?.[0]?.middleName ?? 'unknown',
+				firstName: names?.[0]?.givenName ?? '',
+				lastName: names?.[0]?.familyName ?? '',
+				middleName: names?.[0]?.middleName ?? '',
 				org:
 					organizations && organizations[0]
 						? { department: organizations[0].department, title: organizations[0].title }
@@ -95,9 +95,9 @@ export const searchContacts = async (
 				accountSource: accountName,
 				resourceName,
 				displayNameLastFirst: names?.[0]?.displayNameLastFirst ?? 'unknown',
-				firstName: names?.[0]?.givenName ?? 'unknown',
-				lastName: names?.[0]?.familyName ?? 'unknown',
-				middleName: names?.[0]?.middleName ?? 'unknown',
+				firstName: names?.[0]?.givenName ?? '',
+				lastName: names?.[0]?.familyName ?? '',
+				middleName: names?.[0]?.middleName ?? '',
 				org:
 					organizations && organizations[0]
 						? { department: organizations[0].department, title: organizations[0].title }
