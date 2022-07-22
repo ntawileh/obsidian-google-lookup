@@ -1,6 +1,7 @@
 import { people_v1, people } from '@googleapis/people';
 import { getAuthClient } from './auth';
 import { GoogleServiceOptions, PersonResult } from '@/types';
+import { formatBirthday } from '@/utils';
 
 interface QueryOptions {
 	service: people_v1.People;
@@ -105,7 +106,7 @@ export const searchContacts = async (
 				type: 'CONTACTS',
 				emails: emailAddresses ? emailAddresses.map((e) => e.value) : [],
 				phones: phoneNumbers ? phoneNumbers.map((e) => e.value) : [],
-				birthdays: birthdays ? birthdays.map(({ date }) => (date ? `${date.year}-${date.month}-${date.day}` : '')) : []
+				birthdays: birthdays ? birthdays.map(({ date }) => (date ? formatBirthday(date) : '')) : []
 			};
 		});
 	} catch (err: any) {
