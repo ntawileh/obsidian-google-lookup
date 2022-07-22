@@ -125,9 +125,7 @@ export const getAuthenticatedUserEmail = async ({ service }: QueryOptions): Prom
 			return;
 		}
 
-		if (response.data && response.data.emailAddresses) {
-			return response.data.emailAddresses[0].value;
-		}
+		return response.data.emailAddresses?.[0].value ?? 'unknown';
 	} catch (err: any) {
 		console.error(`unable to query authenticated user: ${err.message}`);
 	}

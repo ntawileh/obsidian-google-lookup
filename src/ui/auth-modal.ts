@@ -74,8 +74,10 @@ export class AuthModal extends Modal {
 				accountName: account.accountName
 			});
 			if (loggedInUser) {
-				console.log(`setting account name to ${loggedInUser}`);
-				account.accountName = loggedInUser;
+				const accountName =
+					loggedInUser === 'unknown' ? `account#${GoogleAccount.getAllAccounts().length + 1}` : loggedInUser;
+				console.log(`setting account name to ${accountName}`);
+				account.accountName = accountName;
 				account.addToAccountsList();
 				GoogleAccount.writeAccountsToStorage();
 			}
