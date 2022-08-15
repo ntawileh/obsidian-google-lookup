@@ -5,11 +5,11 @@
 
 [Obsidian](https://obsidian.md) plugin that can insert Google Calendar events and Google contact info directly into your notes
 
-![](docs/images/event-insert.gif)
+![](https://raw.githubusercontent.com/ntawileh/obsidian-google-lookup/main/docs/images/event-insert.gif)
 
 The suggestion modal is looking up your calendar events. This is useful for folks who take meeting notes in Obsidian and want to quickly populate meeting metadata.
 
-![](docs/images/contact-insert.gif)
+![](https://raw.githubusercontent.com/ntawileh/obsidian-google-lookup/main/docs/images/contact-insert.gif)
 
 Here the suggestion modal is looking up contacts, both personal contacts and also people in your Google Workspace's Directory. This is useful when using Obsidian as a mini-CRM and want to be able to quickly create notes for individuals you work with that can later backlink to other notes.
 
@@ -24,6 +24,6 @@ Here the suggestion modal is looking up contacts, both personal contacts and als
 
 The two commands will show up only when there is an active editor/markdownview.
 
-![](docs/images/commands.png)
+![](https://raw.githubusercontent.com/ntawileh/obsidian-google-lookup/main/docs/images/commands.png)
 
 See [plugin documentation](https://ntawileh.github.io/obsidian-google-lookup) for more info
