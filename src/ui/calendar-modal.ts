@@ -8,6 +8,7 @@ import { AuthModal } from './auth-modal';
 
 type ModalOptions = {
 	template: string | undefined;
+	dateFormat: string | undefined;
 };
 export class EventSuggestModal extends SuggestModal<EventResult> {
 	#initialQuery: moment.Moment;
@@ -58,7 +59,7 @@ export class EventSuggestModal extends SuggestModal<EventResult> {
 
 	async onChooseSuggestion(event: EventResult, evt: MouseEvent | KeyboardEvent) {
 		new Notice(`Inserted info for ${event.summary}`);
-		const e = new Event(event, this.#options.template);
+		const e = new Event(event, this.#options.template, this.#options.dateFormat);
 		insertIntoEditorRange(this.app, await e.generateFromTemplate(this.app));
 	}
 
