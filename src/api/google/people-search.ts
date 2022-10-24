@@ -8,6 +8,33 @@ interface QueryOptions {
 	accountName: string;
 }
 
+const readMask =
+	'names,nicknames,emailAddresses,phoneNumbers,biographies,calendarUrls,organizations,metadata,birthdays';
+
+const parsePersonData = (
+	p: people_v1.Schema$Person,
+	type: 'DIRECTORY' | 'CONTACTS',
+	accountSource: string
+): PersonResult => {
+	const { names, organizations, emailAddresses, phoneNumbers, resourceName, birthdays } = p;
+	return {
+		accountSource,
+		resourceName,
+		displayNameLastFirst: names?.[0]?.displayNameLastFirst ?? 'unknown',
+		firstName: names?.[0]?.givenName ?? '',
+		lastName: names?.[0]?.familyName ?? '',
+		middleName: names?.[0]?.middleName ?? '',
+		org:
+			organizations && organizations[0]
+				? { department: organizations[0].department, title: organizations[0].title }
+				: undefined,
+		type,
+		emails: emailAddresses ? emailAddresses.map((e) => e.value) : [],
+		phones: phoneNumbers ? phoneNumbers.map((e) => e.value) : [],
+		birthdays: birthdays ? birthdays.map(({ date }) => (date ? formatBirthday(date) : '')) : []
+	};
+};
+
 export const getPeopleService = async ({ credentials, token }: GoogleServiceOptions) => {
 	const auth = await getAuthClient(credentials, token);
 
@@ -34,7 +61,7 @@ export const searchDirectory = async (
 	try {
 		const response = await service.people.searchDirectoryPeople({
 			query,
-			readMask: 'names,nicknames,emailAddresses,phoneNumbers,biographies,calendarUrls,organizations,metadata,birthdays',
+			readMask,
 			sources: ['DIRECTORY_SOURCE_TYPE_DOMAIN_CONTACT', 'DIRECTORY_SOURCE_TYPE_DOMAIN_PROFILE']
 		});
 
@@ -47,23 +74,7 @@ export const searchDirectory = async (
 		}
 
 		return response.data.people.map((p): PersonResult => {
-			const { names, organizations, emailAddresses, phoneNumbers, resourceName, birthdays } = p;
-			return {
-				accountSource: accountName,
-				resourceName,
-				displayNameLastFirst: names?.[0]?.displayNameLastFirst ?? 'unknown',
-				firstName: names?.[0]?.givenName ?? '',
-				lastName: names?.[0]?.familyName ?? '',
-				middleName: names?.[0]?.middleName ?? '',
-				org:
-					organizations && organizations[0]
-						? { department: organizations[0].department, title: organizations[0].title }
-						: undefined,
-				type: 'DIRECTORY',
-				emails: emailAddresses ? emailAddresses.map((e) => e.value) : [],
-				phones: phoneNumbers ? phoneNumbers.map((e) => e.value) : [],
-				birthdays: birthdays ? birthdays.map(({ date }) => (date ? `${date.year}-${date.month}-${date.day}` : '')) : []
-			};
+			return parsePersonData(p, 'DIRECTORY', accountName);
 		});
 	} catch (err: any) {
 		console.error(`unable to query directory: ${err.message}`);
@@ -77,7 +88,7 @@ export const searchContacts = async (
 	try {
 		const response = await service.people.searchContacts({
 			query,
-			readMask: 'names,nicknames,emailAddresses,phoneNumbers,biographies,calendarUrls,organizations,metadata,birthdays',
+			readMask,
 			sources: ['READ_SOURCE_TYPE_CONTACT', 'READ_SOURCE_TYPE_PROFILE', 'READ_SOURCE_TYPE_DOMAIN_CONTACT']
 		});
 
@@ -91,23 +102,7 @@ export const searchContacts = async (
 
 		return response.data.results.map((p): PersonResult => {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			const { names, organizations, emailAddresses, phoneNumbers, resourceName, birthdays } = p.person!;
-			return {
-				accountSource: accountName,
-				resourceName,
-				displayNameLastFirst: names?.[0]?.displayNameLastFirst ?? 'unknown',
-				firstName: names?.[0]?.givenName ?? '',
-				lastName: names?.[0]?.familyName ?? '',
-				middleName: names?.[0]?.middleName ?? '',
-				org:
-					organizations && organizations[0]
-						? { department: organizations[0].department, title: organizations[0].title }
-						: undefined,
-				type: 'CONTACTS',
-				emails: emailAddresses ? emailAddresses.map((e) => e.value) : [],
-				phones: phoneNumbers ? phoneNumbers.map((e) => e.value) : [],
-				birthdays: birthdays ? birthdays.map(({ date }) => (date ? formatBirthday(date) : '')) : []
-			};
+			return parsePersonData(p.person!, 'CONTACTS', accountName);
 		});
 	} catch (err: any) {
 		console.error(`unable to query contact: ${err.message}`);
