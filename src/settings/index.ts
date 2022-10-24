@@ -89,6 +89,13 @@ export class GoogleLookupSettingTab extends PluginSettingTab {
 			key: 'template_file_event'
 		});
 
+		this.insertTextInputSetting({
+			name: 'Date Format',
+			description: 'Date format to be used on the start date field.',
+			placeholder: 'ddd, MMM Do @ hh:mma',
+			key: 'event_date_format'
+		});
+
 		containerEl.createEl('h3', { text: 'Google Client' });
 		this.insertTextInputSetting({
 			name: 'Client ID',

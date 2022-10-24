@@ -6,10 +6,12 @@ import { App, moment } from 'obsidian';
 export class Event {
 	#event: EventResult;
 	#template: string | undefined;
+	#dateFormat: string | undefined;
 
-	constructor(e: EventResult, templateFile: string | undefined) {
+	constructor(e: EventResult, templateFile: string | undefined, dateFormat: string | undefined) {
 		this.#event = e;
 		this.#template = templateFile;
+		this.#dateFormat = dateFormat;
 	}
 
 	generateFromTemplate = async (app: App) => {
@@ -27,7 +29,7 @@ export class Event {
 		const transform = {
 			summary: this.#event.summary,
 			description: this.#event.description,
-			start: startMoment.format('ddd, MMM Do @ hh:mma'),
+			start: startMoment.format(this.#dateFormat ?? 'ddd, MMM Do @ hh:mma'),
 			link: this.#event.htmlLink,
 			organizer: this.#event.organizer,
 			attendees: this.#event.attendees

@@ -37,7 +37,7 @@ export default class GoogleLookupPlugin extends Plugin {
 			}).open();
 		});
 		this.addCommandIfMarkdownView('Insert Event Info', 'insert-event-info', () => {
-			new EventSuggestModal(this.app, { template: this.settings!.template_file_event }).open();
+			new EventSuggestModal(this.app, { template: this.settings!.template_file_event, dateFormat: this.settings!.event_date_format }).open();
 		});
 
 		this.addSettingTab(new GoogleLookupSettingTab(this.app, this));
