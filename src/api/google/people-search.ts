@@ -9,14 +9,26 @@ interface QueryOptions {
 }
 
 const readMask =
-	'names,nicknames,emailAddresses,phoneNumbers,biographies,calendarUrls,organizations,metadata,birthdays';
+	'names,nicknames,emailAddresses,phoneNumbers,biographies,calendarUrls,organizations,metadata,birthdays,urls,clientData,relations,userDefined,biographies';
 
 const parsePersonData = (
 	p: people_v1.Schema$Person,
 	type: 'DIRECTORY' | 'CONTACTS',
 	accountSource: string
 ): PersonResult => {
-	const { names, organizations, emailAddresses, phoneNumbers, resourceName, birthdays } = p;
+	const {
+		names,
+		organizations,
+		emailAddresses,
+		phoneNumbers,
+		resourceName,
+		birthdays,
+		relations,
+		userDefined,
+		clientData,
+		urls,
+		biographies
+	} = p;
 	return {
 		accountSource,
 		resourceName,
@@ -26,12 +38,33 @@ const parsePersonData = (
 		middleName: names?.[0]?.middleName ?? '',
 		org:
 			organizations && organizations[0]
-				? { department: organizations[0].department, title: organizations[0].title }
+				? { department: organizations[0].department, title: organizations[0].title, name: organizations[0].name }
 				: undefined,
 		type,
 		emails: emailAddresses ? emailAddresses.map((e) => e.value) : [],
 		phones: phoneNumbers ? phoneNumbers.map((e) => e.value) : [],
-		birthdays: birthdays ? birthdays.map(({ date }) => (date ? formatBirthday(date) : '')) : []
+		birthdays: birthdays ? birthdays.map(({ date }) => (date ? formatBirthday(date) : '')) : [],
+		relations: relations
+			? relations.map(({ person, type }) => {
+					return { person, type };
+			  })
+			: [],
+		userDefinedData: userDefined
+			? userDefined.map(({ key, value }) => {
+					return { key, value };
+			  })
+			: [],
+		clientData: clientData
+			? clientData.map(({ key, value }) => {
+					return { key, value };
+			  })
+			: [],
+		urls: urls
+			? urls.map(({ type, value }) => {
+					return { type, value };
+			  })
+			: [],
+		bio: biographies && biographies[0] ? biographies[0].value : ''
 	};
 };
 

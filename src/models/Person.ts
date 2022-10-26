@@ -46,7 +46,12 @@ export class Person {
 			'org.department': this.#person.org?.department || '',
 			type: this.#person.type,
 			link: this.getContactUrl(),
-			source: this.#person.accountSource.toLocaleLowerCase()
+			source: this.#person.accountSource.toLocaleLowerCase(),
+			urls: this.#person.urls?.map((u) => `${u?.type}: ${u?.value}`).join(', ') || '',
+			relations: this.#person.relations?.map((r) => `${r?.type}: ${r?.person}`).join(', ') || '',
+			clientData: this.#person.clientData?.map((c) => `${c?.key}: ${c?.value}`).join(', ') || '',
+			userData: this.#person.userDefinedData?.map((c) => `${c?.key}: ${c?.value}`).join(', ') || '',
+			bio: this.#person.bio ?? ''
 		};
 
 		for (const [k, v] of Object.entries(transform)) {
