@@ -73,8 +73,14 @@ Fields are variables enclosed in `{{` `}}` and will be replaced when the content
 | birthdays      | birthday(s) stored for the contact in year-month-day format, joined by `,`                                                                                                                                     |
 | org.title      | Title of contact in company directory (if applicable)                                                                                                                                                          |
 | org.department | Person's department in company directory (if applicable)                                                                                                                                                       |
+| org.name       | Name of the organization/company (if applicable)                                                                                                                                                               |
 | type           | Passed along from Google API. Possible values [here](https://developers.google.com/people/api/rest/v1/people#Person.SourceType). Useful to differentiate a contact vs. someone obtained from company directory |
 | source         | will return the google account from where this event was fetched                                                                                                                                               |
+| urls           | urls for that contact; includes things like homepage. will be returned as a comma separated string of `type: value`. For example, `homepage: https://www.obsidian.md`                                          |
+| relations      | relations for the contact. will be returned as a comma separated string of `type: person`. For example, `spouse: Jack`                                                                                         |
+| clientData     | client key/value pairs. will be returned as a comma separated string of `key: value`.                                                                                                                          |
+| userData       | user defined key/value pairs. will be returned similar to `clientData`                                                                                                                                         |
+| bio            | the contact's bio; in Google Contacts, that field is called `Notes`                                                                                                                                            |
 | link           | will return the url, if available, to open the contact on Google Contacts                                                                                                                                      |
 
 ### Customizing Template
