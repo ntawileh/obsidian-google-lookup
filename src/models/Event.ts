@@ -45,7 +45,8 @@ export class Event {
 				})
 				.join(', '),
 
-			source: this.#event.accountSource.toLocaleLowerCase()
+			source: this.#event.accountSource.toLocaleLowerCase(),
+			json: JSON.stringify(this.#event, null, 2)
 		};
 
 		for (const [k, v] of Object.entries(transform)) {
