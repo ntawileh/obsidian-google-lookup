@@ -40,6 +40,7 @@ Fields are variables enclosed in `{{` `}}` and will be replaced when the content
 | attendees      | Email(s) of all attendees, joined by `,`. If the attendee had declined the event, a `(x)` will appear near their email. A tentative response will have a `(?)` appended |
 | attendees.name | Similar to `attendees` but will replace the email with the name of the attendee. If the name is not available for an attendee, the email is returned instead.           |
 | source         | will return the google account from where this event was fetched                                                                                                        |
+| json           | returns the entire event object as JSON. this is useful when used with other templating plugins. [see example](/obsidian-google-lookup/person/#using-templater).        |
 
 ### Customizing Template
 

@@ -52,7 +52,8 @@ export class Person {
 			relations: this.#person.relations?.map((r) => `${r?.type}: ${r?.person}`).join(', ') || '',
 			clientData: this.#person.clientData?.map((c) => `${c?.key}: ${c?.value}`).join(', ') || '',
 			userData: this.#person.userDefinedData?.map((c) => `${c?.key}: ${c?.value}`).join(', ') || '',
-			bio: this.#person.bio ?? ''
+			bio: this.#person.bio ?? '',
+			json: JSON.stringify(this.#person, null, 2)
 		};
 
 		for (const [k, v] of Object.entries(transform)) {

@@ -82,7 +82,47 @@ Fields are variables enclosed in `{{` `}}` and will be replaced when the content
 | userData       | user defined key/value pairs. will be returned similar to `clientData`                                                                                                                                         |
 | bio            | the contact's bio; in Google Contacts, that field is called `Notes`                                                                                                                                            |
 | link           | will return the url, if available, to open the contact on Google Contacts                                                                                                                                      |
+| json           | returns the entire contact object as JSON. this is useful when used with other templating plugins. [see example below](#using-templater).                                                                      |
 
 ### Customizing Template
 
 You can create your own template in a file, and include a link to that file in Settings for `Event Template`. For example, you can create a note in `_assets/templates/` called `t_event` and then provide the path `_assets/templates/t_event` in Settings
+
+### Using Templater
+
+You can use the `json` field to get more flexibility with how the info is rendered in your template. This would typically be done with another templates plugin, such as [Templater](https://silentvoid13.github.io/Templater/).
+
+```
+<%*
+ let json = {{json}}
+ let firstName = json.firstName
+ let emails = json.emails.join("\n")
+ let relations = json.relations.map(({person, type}) => `${firstName} is a ${type || ''} relation to ${person}`).join("\n")
+ -%>
+
+ my contact's first name is <% firstName %>
+ emails:
+ <% emails %>
+
+ relations:
+ <% relations %>
+
+ date: <% tp.file.creation_date("YYYY-MM-DD HH:mm:ss") %>
+
+<% tp.file.cursor() %>
+```
+
+The first line brings in the entire object into the `json` variable. From there, you can construct any template for each individual field. When the above Templater snippet is run, it would output something similar to this:
+
+```
+ my contact's first name is Stewie
+ emails:
+ stewie.griffin@baby.example.com
+ stewie@baby.genius.example.com
+
+ relations:
+ Stewie is a child relation to Lois
+ Stewie is a brother relation to Brian
+
+ date: 2022-10-26 14:57:22
+```
