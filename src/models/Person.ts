@@ -44,6 +44,7 @@ export class Person {
 			birthdays: this.#person.birthdays?.join(', ') || '',
 			'org.title': this.#person.org?.title || '',
 			'org.department': this.#person.org?.department || '',
+			'org.name': this.#person.org?.name || '',
 			type: this.#person.type,
 			link: this.getContactUrl(),
 			source: this.#person.accountSource.toLocaleLowerCase(),
