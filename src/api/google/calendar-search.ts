@@ -23,7 +23,7 @@ export const searchCalendarEvents = async (
 	try {
 		const response = await service.events.list({
 			calendarId: 'primary',
-			maxAttendees: 10,
+			maxAttendees: 100,
 			singleEvents: true,
 			maxResults: 12,
 			orderBy: 'startTime',
