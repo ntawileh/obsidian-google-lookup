@@ -1,5 +1,5 @@
 import { DEFAULT_PERSON_FILENAME_FORMAT, DEFAULT_PERSON_TEMPLATE } from '@/settings/default-templates';
-import { PersonResult } from '@/types';
+import { PersonAddress, PersonResult } from '@/types';
 import { getTemplateContents } from '@/utils/template';
 import { App, moment } from 'obsidian';
 
@@ -29,6 +29,16 @@ export class Person {
 		return this.#person.resourceName.replace('people/', 'https://contacts.google.com/person/');
 	}
 
+	private transformAddress = (a: Partial<PersonAddress> | null | undefined): string => {
+		if (a == null) {
+			return '';
+		}
+		const fields = [a.streetAddress, a.extendedAddress, a.city, a.postalCode, a.poBox, a.countryCode]
+			.filter((f) => f && f.length > 0)
+			.join(', ');
+		return `${a?.type ? a.type.concat(': ') : ''}${fields}`;
+	};
+
 	private applyTemplateTransformations = (rawTemplateContents: string): string => {
 		let templateContents = rawTemplateContents;
 		const now = moment();
@@ -39,6 +49,9 @@ export class Person {
 			middleName: this.#person.middleName || '',
 			firstLast: `${this.#person.firstName}${this.#person.lastName}` || '',
 			lastFirst: `${this.#person.lastName}${this.#person.firstName}` || '',
+			nicknames: this.#person.nicknames?.map((n) => `${n?.value}`).join(', ') || '',
+			contactGroups: this.#person.contactGroupMembership?.map((g) => `${g?.replace('contactGroups/', '')}`) || '',
+			addresses: this.#person.addresses?.map((a) => `${this.transformAddress(a)}`).join('\n') || '',
 			emails: this.#person.emails?.join(', ') || '',
 			phones: this.#person.phones?.join(', ') || '',
 			birthdays: this.#person.birthdays?.join(', ') || '',

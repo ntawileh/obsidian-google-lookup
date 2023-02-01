@@ -9,7 +9,7 @@ interface QueryOptions {
 }
 
 const readMask =
-	'names,nicknames,emailAddresses,phoneNumbers,biographies,calendarUrls,organizations,metadata,birthdays,urls,clientData,relations,userDefined,biographies';
+	'names,nicknames,emailAddresses,phoneNumbers,biographies,calendarUrls,organizations,metadata,birthdays,urls,clientData,relations,userDefined,biographies,addresses,memberships';
 
 const parsePersonData = (
 	p: people_v1.Schema$Person,
@@ -27,7 +27,10 @@ const parsePersonData = (
 		userDefined,
 		clientData,
 		urls,
-		biographies
+		biographies,
+		addresses,
+		nicknames,
+		memberships
 	} = p;
 	return {
 		accountSource,
@@ -64,7 +67,35 @@ const parsePersonData = (
 					return { type, value };
 			  })
 			: [],
-		bio: biographies && biographies[0] ? biographies[0].value : ''
+		bio: biographies && biographies[0] ? biographies[0].value : '',
+		addresses: addresses
+			? addresses.map(
+					({ type, poBox, streetAddress, extendedAddress, city, region, postalCode, country, countryCode }) => {
+						return { type, poBox, streetAddress, extendedAddress, city, region, postalCode, country, countryCode };
+					}
+			  )
+			: [],
+		nicknames: nicknames
+			? nicknames.map(({ type, value }) => {
+					return { type, value };
+			  })
+			: [],
+		contactGroupMembership: memberships
+			? memberships
+					.filter((m) => {
+						return m.contactGroupMembership;
+					})
+					.map(({ contactGroupMembership }) => {
+						return contactGroupMembership?.contactGroupResourceName;
+					})
+			: [],
+		domainMembership: memberships
+			? memberships
+					.filter((m) => {
+						return m.domainMembership;
+					})
+					.first()?.domainMembership?.inViewerDomain
+			: false
 	};
 };
 
