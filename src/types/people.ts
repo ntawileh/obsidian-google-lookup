@@ -13,6 +13,23 @@ export type PersonRelation = {
 	type: string | null;
 };
 
+export type PersonAddress = {
+	type: string | null;
+	poBox: string | null;
+	streetAddress: string | null;
+	extendedAddress: string | null;
+	city: string | null;
+	region: string | null;
+	postalCode: string | null;
+	country: string | null;
+	countryCode: string | null;
+};
+
+export type PersonNickname = {
+	type: string | null;
+	value: string | null;
+};
+
 export type PersonResult = {
 	type?: string;
 	displayNameLastFirst?: string;
@@ -29,9 +46,13 @@ export type PersonResult = {
 	};
 	accountSource: string;
 	resourceName: string | undefined | null;
+	bio?: string | null;
+	contactGroupMembership?: (string | null | undefined)[];
+	domainMembership?: boolean | null;
 	urls?: (Partial<PersonURL> | null | undefined)[];
 	userDefinedData?: (Partial<PersonCustomData> | null | undefined)[];
 	clientData?: (Partial<PersonCustomData> | null | undefined)[];
 	relations?: (Partial<PersonRelation> | null | undefined)[];
-	bio?: string | null;
+	addresses?: (Partial<PersonAddress> | null | undefined)[];
+	nicknames?: (Partial<PersonNickname> | null | undefined)[];
 };
