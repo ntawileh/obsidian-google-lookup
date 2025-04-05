@@ -16,9 +16,9 @@ export const getTemplateContents = async (app: App, templatePath: string | undef
 	}
 };
 
-export const makePhotoMarkdownLink = (url?: string | null): string => {
+export const makePhotoMarkdownLink = (url?: string | null, alt?: string): string => {
 	if (!url) {
 		return '';
 	}
-	return `![${url.split('/').pop()}](${url})`;
+	return `![${alt ?? url.split('/').pop()}](${url})`;
 };
