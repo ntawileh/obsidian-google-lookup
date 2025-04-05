@@ -47,6 +47,9 @@ created: ["{{date}} {{time}}"]
 Email: {{emails}}
 Phone: {{phones}}
 
+[open in Google Contacts]({{link}})
+
+{{primaryPhoto}}
 
 ----
 

@@ -19,6 +19,7 @@ Phone: {{phones}}
 
 [open in Google Contacts]({{link}})
 
+{{primaryPhoto}}
 
 ----
 
