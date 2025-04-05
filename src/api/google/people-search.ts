@@ -9,7 +9,7 @@ interface QueryOptions {
 }
 
 const readMask =
-	'names,nicknames,emailAddresses,phoneNumbers,biographies,calendarUrls,organizations,metadata,birthdays,urls,clientData,relations,userDefined,biographies,addresses,memberships';
+	'names,nicknames,emailAddresses,phoneNumbers,biographies,calendarUrls,organizations,metadata,birthdays,urls,clientData,relations,userDefined,biographies,addresses,memberships,photos,coverPhotos';
 
 const parsePersonData = (
 	p: people_v1.Schema$Person,
@@ -30,7 +30,8 @@ const parsePersonData = (
 		biographies,
 		addresses,
 		nicknames,
-		memberships
+		memberships,
+		photos
 	} = p;
 	return {
 		accountSource,
@@ -50,22 +51,22 @@ const parsePersonData = (
 		relations: relations
 			? relations.map(({ person, type }) => {
 					return { person, type };
-			  })
+				})
 			: [],
 		userDefinedData: userDefined
 			? userDefined.map(({ key, value }) => {
 					return { key, value };
-			  })
+				})
 			: [],
 		clientData: clientData
 			? clientData.map(({ key, value }) => {
 					return { key, value };
-			  })
+				})
 			: [],
 		urls: urls
 			? urls.map(({ type, value }) => {
 					return { type, value };
-			  })
+				})
 			: [],
 		bio: biographies && biographies[0] ? biographies[0].value : '',
 		addresses: addresses
@@ -73,12 +74,12 @@ const parsePersonData = (
 					({ type, poBox, streetAddress, extendedAddress, city, region, postalCode, country, countryCode }) => {
 						return { type, poBox, streetAddress, extendedAddress, city, region, postalCode, country, countryCode };
 					}
-			  )
+				)
 			: [],
 		nicknames: nicknames
 			? nicknames.map(({ type, value }) => {
 					return { type, value };
-			  })
+				})
 			: [],
 		contactGroupMembership: memberships
 			? memberships
@@ -95,7 +96,15 @@ const parsePersonData = (
 						return m.domainMembership;
 					})
 					.first()?.domainMembership?.inViewerDomain
-			: false
+			: false,
+		photos:
+			photos && photos[0]
+				? photos?.map((p) => ({
+						source: p.metadata?.source?.type,
+						url: p.url,
+						primary: p.metadata?.primary
+					}))
+				: []
 	};
 };
 

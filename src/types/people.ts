@@ -30,6 +30,12 @@ export type PersonNickname = {
 	value: string | null;
 };
 
+export type PersonPhoto = {
+	source: string | null;
+	url: string | null;
+	primary?: boolean | null;
+};
+
 export type PersonResult = {
 	type?: string;
 	displayNameLastFirst?: string;
@@ -55,4 +61,5 @@ export type PersonResult = {
 	relations?: (Partial<PersonRelation> | null | undefined)[];
 	addresses?: (Partial<PersonAddress> | null | undefined)[];
 	nicknames?: (Partial<PersonNickname> | null | undefined)[];
+	photos?: (Partial<PersonPhoto> | null | undefined)[];
 };
