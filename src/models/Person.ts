@@ -1,6 +1,6 @@
 import { DEFAULT_PERSON_FILENAME_FORMAT, DEFAULT_PERSON_TEMPLATE } from '@/settings/default-templates';
 import { PersonAddress, PersonResult } from '@/types';
-import { getTemplateContents } from '@/utils/template';
+import { getTemplateContents, makePhotoMarkdownLink } from '@/utils/template';
 import { App, moment } from 'obsidian';
 
 export class Person {
@@ -66,6 +66,12 @@ export class Person {
 			clientData: this.#person.clientData?.map((c) => `${c?.key}: ${c?.value}`).join(', ') || '',
 			userData: this.#person.userDefinedData?.map((c) => `${c?.key}: ${c?.value}`).join(', ') || '',
 			bio: this.#person.bio ?? '',
+			photos:
+				this.#person.photos?.map((p) => makePhotoMarkdownLink(p?.url, `${this.#person.firstName} photo`)).join(' ') ||
+				'',
+			primaryPhoto:
+				makePhotoMarkdownLink(this.#person.photos?.find((p) => p?.primary)?.url, `${this.#person.firstName} photo`) ||
+				'',
 			json: JSON.stringify(this.#person, null, 2)
 		};
 

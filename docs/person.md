@@ -47,6 +47,9 @@ created: ["{{date}} {{time}}"]
 Email: {{emails}}
 Phone: {{phones}}
 
+[open in Google Contacts]({{link}})
+
+{{primaryPhoto}}
 
 ----
 
@@ -85,6 +88,8 @@ Fields are variables enclosed in `{{` `}}` and will be replaced when the content
 | userData       | user defined key/value pairs. will be returned similar to `clientData`                                                                                                                                         |
 | bio            | the contact's bio; in Google Contacts, that field is called `Notes`                                                                                                                                            |
 | link           | will return the url, if available, to open the contact on Google Contacts                                                                                                                                      |
+| photos         | profile photos for that contact. will be returned as a space separated markdown image links. For example, `![stewie photo](https://url.of.photo) ![stewie photo](https://url.of.another.photo)`                |
+| primaryPhoto   | primary (based on Google sources) profile photo for that contact. will be returned as markdown image link. For example, `![stewie photo](https://url.of.photo)`                                                |
 | json           | returns the entire contact object as JSON. this is useful when used with other templating plugins. [see example below](#using-templater).                                                                      |
 
 ### Customizing Template
