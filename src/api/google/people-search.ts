@@ -149,9 +149,8 @@ export const searchDirectory = async (
 		return response.data.people.map((p): PersonResult => {
 			return parsePersonData(p, 'DIRECTORY', accountName);
 		});
-	} catch (err: any) {
-		console.error(`unable to query directory: ${err.message}`);
-	}
+		// eslint-disable-next-line no-empty
+	} catch (err: any) {}
 };
 
 export const searchContacts = async (
