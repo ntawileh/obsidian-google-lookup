@@ -24,7 +24,8 @@ export class AuthModal extends Modal {
 			.createServer(async (req, res) => {
 				const re = /\/\?code=(\d\/[\w|-]*)&/;
 				if (req.url) {
-					const match = req.url.match(re);
+					const url = req.url.replace('%2F', '/');
+					const match = url.match(re);
 					if (match && match?.length > 1) {
 						this.onSubmit(match[1]);
 						setTimeout(() => {
