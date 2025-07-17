@@ -25,7 +25,6 @@ export const searchCalendarEvents = async (
 			calendarId: 'primary',
 			maxAttendees: 100,
 			singleEvents: true,
-			maxResults: 12,
 			orderBy: 'startTime',
 			timeMin: query.startOf('day').format(),
 			timeMax: query.endOf('day').format()
