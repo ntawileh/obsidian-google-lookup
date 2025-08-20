@@ -1,0 +1,23 @@
+site_name: Obsidian Google Lookup
+site_url: 'https://ntawileh.github.io/obsidian-google-lookup'
+site_description: Obsidian plugin for Google Contacts and Calendar
+site_author: nadim@park5.io
+copyright: Copyright &copy; 2025 nadim@park5.io
+
+repo_name: 'ntawileh/obsidian-google-lookup'
+repo_url: 'https://github.com/ntawileh/obsidian-google-lookup'
+
+theme:
+  name: material
+  features:
+    - navigation.tracking
+
+markdown_extensions:
+  - meta
+
+nav:
+  - 'index.md'
+  - 'install.md'
+  - 'google-setup.md'
+  - 'events.md'
+  - 'person.md'

@@ -1,0 +1,39 @@
+name: Build obsidian plugin
+
+on:
+  push:
+    tags:
+      - '*'
+
+env:
+  PLUGIN_NAME: obsidian-google-lookup
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '18.x'
+      - name: Build
+        id: build
+        run: |
+          yarn
+          yarn run build
+          ls
+          echo "::set-output name=tag_name::$(git tag --sort version:refname | tail -n 1)"
+          zip --junk-paths ${{ env.PLUGIN_NAME }} README.md dist/main.js dist/styles.css dist/manifest.json
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            dist/main.js
+            dist/manifest.json
+            dist/styles.css
+            ${{ env.PLUGIN_NAME }}.zip
+            README.md

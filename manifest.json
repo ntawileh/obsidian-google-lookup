@@ -1,0 +1,10 @@
+{
+	"id": "obsidian-google-lookup",
+	"name": "Google Calendar and Contacts Lookup",
+	"version": "1.5.3",
+	"minAppVersion": "0.12.0",
+	"description": "Import contact and calendar event information from your Google account",
+	"author": "nadim@park5.io",
+	"authorUrl": "https://github.com/ntawileh/obsidian-google-lookup",
+	"isDesktopOnly": true
+}
