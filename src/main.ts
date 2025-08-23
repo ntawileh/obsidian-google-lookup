@@ -6,9 +6,11 @@ import { EventSuggestModal } from '@/ui/calendar-modal';
 import { DEFAULT_SETTINGS, GoogleLookupSettingTab } from './settings';
 import { GoogleLookupPluginSettings } from './types';
 import { getGoogleCredentials, hasGoogleCredentials } from './settings/google-credentials';
+import { GoogleLookupApi, createApi } from './api';
 
 export default class GoogleLookupPlugin extends Plugin {
 	settings: GoogleLookupPluginSettings | undefined;
+	public api?: GoogleLookupApi;
 
 	addCommandIfMarkdownView(name: string, id: string, func: () => void) {
 		this.addCommand({
@@ -43,6 +45,7 @@ export default class GoogleLookupPlugin extends Plugin {
 		this.addSettingTab(new GoogleLookupSettingTab(this.app, this));
 
 		GoogleAccount.loadAccountsFromStorage();
+		this.api = createApi();
 	}
 
 	onunload() {

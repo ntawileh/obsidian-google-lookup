@@ -4,6 +4,9 @@ import { GoogleLookupPluginSettings, KeysMatching } from '@/types';
 import { GoogleAccount } from '@/models/Account';
 import { AuthModal } from '@/ui/auth-modal';
 import { ConfirmModal } from '@/ui/confirm-modal';
+import { SecureConfirmModal } from '@/ui/secure-confirm-modal';
+import { isApiExposureEnabled, setApiExposure } from './api-exposure';
+import { createApi } from '@/api';
 
 export const DEFAULT_SETTINGS: Partial<GoogleLookupPluginSettings> = {
 	client_redirect_uri_port: '42601',
@@ -115,6 +118,9 @@ export class GoogleLookupSettingTab extends PluginSettingTab {
 			key: 'client_redirect_uri_port'
 		});
 
+		containerEl.createEl('h3', { text: 'Advanced' });
+		this.insertSecureApiToggle();
+
 		containerEl.createEl('h3', { text: 'Accounts' });
 		this.displayAccounts();
 		this.containerEl.appendChild(this.accountsEl);
@@ -163,6 +169,41 @@ export class GoogleLookupSettingTab extends PluginSettingTab {
 					.setValue(this.plugin.settings![key] || '');
 			});
 	}
+
+	private insertSecureApiToggle() {
+		const pluginId = this.plugin.manifest.id;
+		new Setting(this.containerEl)
+			.setName('Expose API to other plugins')
+			.setDesc('Allow other plugins to access the Google Lookup API. This is disabled by default for security.')
+			.addToggle((tc) => {
+				tc.setValue(isApiExposureEnabled()).onChange(async (v) => {
+					if (v) {
+						new SecureConfirmModal(
+							this.app,
+							'This will expose a local API which would allow your other plugins, or inline code, running inside Obsidian to query (read-only) your Google Contacts and Calendar information at any time. Please confirm that you want to proceed.',
+							'I understand the risk',
+							() => {
+								setApiExposure(true);
+								const plugin = (this.app as any).plugins.plugins[pluginId];
+								if (plugin) {
+									plugin.api = createApi();
+								}
+							},
+							() => {
+								tc.setValue(false);
+							}
+						).open();
+					} else {
+						setApiExposure(false);
+						const plugin = (this.app as any).plugins.plugins[pluginId];
+						if (plugin) {
+							plugin.api = undefined;
+						}
+					}
+				});
+			});
+	}
+
 	private insertToggleSetting({ container = this.containerEl, key, name, description }: ToggleSettingParams) {
 		new Setting(container)
 			.setName(name)
