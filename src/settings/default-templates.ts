@@ -29,9 +29,14 @@ Phone: {{phones}}
 
 `;
 export const DEFAULT_EVENT_TEMPLATE = `
-### {{summary}} 
+### {{summary}}
 
-* {{start}}  - [Link]({{link}})
-* organizer {{organizer}}  
-* {{attendees}}  
+* {{start}}-{{end}}: [Link]({{link}})
+* organizer {{organizer}}
+* {{attendees}}
+* {{location}}
+
+{{attachments}}
+
+{{conference}}
 `;

@@ -24,12 +24,16 @@ export class Event {
 	private applyTemplateTransformations = (rawTemplateContents: string): string => {
 		let templateContents = rawTemplateContents;
 		const startMoment = moment(this.#event.startTime);
+		const endMoment = moment(this.#event.endTime);
 		const now = moment();
 
 		const transform = {
+			id: this.#event.id,
+			recurringId: this.#event.recurringId,
 			summary: this.#event.summary,
 			description: this.#event.description,
 			start: startMoment.format(this.#dateFormat ?? 'ddd, MMM Do @ hh:mma'),
+			end: endMoment.isValid() ? endMoment.format(this.#dateFormat ?? 'ddd, MMM Do @ hh:mma') : '',
 			link: this.#event.htmlLink,
 			organizer: this.#event.organizer,
 			attendees: this.#event.attendees
@@ -46,11 +50,27 @@ export class Event {
 				.join(', '),
 
 			source: this.#event.accountSource.toLocaleLowerCase(),
+			status: this.#event.status,
+			eventType: this.#event.eventType,
+			location: this.#event.location,
+			attachments: this.#event.attachments
+				.map((att) => {
+					return `- [${att.title ?? 'Attachment'}](${att.fileUrl})${
+						att.mimeType ? ' (' + att.mimeType + ')' : ''
+					}${att.iconUrl ? ` ![](${att.iconUrl})` : ''}`;
+				}).join('\n'),
+			conference: this.#event.conferenceData
+				? this.#event.conferenceData.entryPoints
+					.map((ep) => {
+						return `- [${ep.label ?? 'Link'}](${ep.uri}) (${ep.entryPointType})`;
+					}).join('\n')
+				: '',
+			'conference.solution': this.#event.conferenceData?.solutionName ?? '',
 			json: JSON.stringify(this.#event, null, 2)
 		};
 
 		for (const [k, v] of Object.entries(transform)) {
-			templateContents = templateContents.replace(new RegExp(`{{\\s*${k}\\s*}}`, 'gi'), v);
+			templateContents = templateContents.replace(new RegExp(`{{\s*${k}\s*}}`, 'gi'), v);
 		}
 		templateContents = templateContents
 			.replace(/{{\s*date\s*}}/gi, now.format('YYYY-MM-DD'))
