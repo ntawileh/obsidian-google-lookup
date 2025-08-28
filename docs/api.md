@@ -67,6 +67,17 @@ Searches for events in your Google Calendar.
 
 **Returns:** `Promise<EventResult[]>` - A promise that resolves to an array of event results.
 
+### eventById(eventId, [accountName])
+
+Retrieves a specific calendar event by its ID.
+
+**Parameters:**
+
+* `eventId` (string): The ID of the event to retrieve.
+* `accountName` (string, optional): The name of a specific account to query. If not provided, all accounts will be searched.
+
+**Returns:** `Promise<EventResult | undefined>` - A promise that resolves to the event result, or undefined if not found.
+
 ## Example
 
 Here is an example of how to use the API from a Templater user script:
@@ -99,6 +110,14 @@ async function lookup(tp) {
   // Search for today's events
   const todaysEvents = await api.events(moment());
   console.log("Today's Events:", todaysEvents);
+
+  // If there are events, get the first one by its ID
+  // **NOTE**: This is just for the example. `todaysEvents[0]` will have the
+  //           same information as `firstEvent`.
+  if (todaysEvents.length > 0) {
+    const firstEvent = await api.eventById(todaysEvents[0].id);
+    console.log("First Event by ID:", firstEvent);
+  }
 }
 
 module.exports = lookup;
