@@ -19,7 +19,10 @@ export const insertIntoEditorRange = (app: App, content: string) => {
 	if (!editor || !isViewInSourceMode(view)) {
 		return;
 	}
-	editor.replaceRange(content, editor.getCursor());
+	const cursor = editor.getCursor();
+	// Use replaceRange with both 'from' and 'to' positions set to cursor
+	// to insert without replacing any existing content
+	editor.replaceRange(content, cursor, cursor);
 };
 
 export const renameFile = async (app: App, title: string, folder: string) => {
