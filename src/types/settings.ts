@@ -1,3 +1,5 @@
+export type PersonInsertionMode = 'inline' | 'link';
+
 export type GoogleLookupPluginSettings = {
 	client_id: string;
 	client_secret: string;
@@ -8,4 +10,5 @@ export type GoogleLookupPluginSettings = {
 	template_file_event: string;
 	event_date_format: string;
 	rename_person_file: boolean;
+	person_insertion_mode: string; // 'inline' | 'link'
 };
