@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-google-lookup",
-	"version": "1.5.3",
+	"version": "1.6.0",
 	"description": "Import contact and calendar event information from your Google account",
 	"main": "main.js",
 	"scripts": {
