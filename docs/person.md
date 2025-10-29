@@ -11,7 +11,36 @@ When nothing has been input yet, the following criteria will be applied as defau
 - if some text is selected use that as a default query
 - use the filename as a default query
 
+## Contact Insertion Mode
+
+You can choose how contact information is inserted into your notes. This setting is found in Settings under `Contact insertion mode`.
+
+### Inline content (default)
+
+When you select a contact, the full content from your person template will be inserted at the cursor position in the current note.
+
+### Create file and insert link
+
+When this mode is selected, the plugin will:
+
+- create a new note for the contact in the directory specified in `Folder for people notes` setting
+- the note is populated with content from your person template
+- a wiki link (ex: `[[Stewie Griffin]]`) is inserted at the cursor position instead of the full content
+
+If a note for that contact already exists, the plugin will not modify it and will only insert the link. This means you can safely make manual edits to contact notes without worrying about them being overwritten.
+
+This mode is useful if you want to:
+
+- build a knowledge base of contacts in a dedicated directory
+- insert references to contacts in your daily notes or other notes
+- preserve any manual edits you make to contact notes
+- avoid errors when inserting the same contact multiple times
+
+> When using `Create file and insert link` mode, make sure you have specified a directory in the `Folder for people notes` setting. If that directory doesn't exist, it will be created automatically.
+
 ### Move/Rename
+
+> This setting only applies when using `Inline content` mode. When using `Create file and insert link` mode, notes are created directly in the `Folder for people notes` directory with the appropriate filename.
 
 If the option to move/rename the note is enabled (default is enabled), after the content from the person template is inserted:
 
@@ -27,6 +56,11 @@ If the option to move/rename the note is enabled (default is enabled), after the
 ![](images/person-move-settings.png)
 
 ## Template
+
+How the template is used depends on your `Contact insertion mode` setting:
+
+- **Inline content mode:** The template content is inserted directly at the cursor position in the current note
+- **Create file and insert link mode:** The template is used to populate newly created contact notes in the `Folder for people notes` directory. If a note already exists for that contact, the template is not applied (preserving any manual edits you've made).
 
 ### Default Template
 
@@ -58,7 +92,7 @@ Phone: {{phones}}
 ### [[{{date}}]] {{time}} - Created
 ```
 
-The intention with this default template is to be used to create a new note rather than inserting into an existing one, although that can be customized by changing the template.
+The default template is designed to create a complete note for a contact. This works well with `Create file and insert link` mode, and can also be used with `Inline content` mode if you want to insert full contact information into a note. You can customize the template to match your workflow.
 
 ### Template Fields
 
