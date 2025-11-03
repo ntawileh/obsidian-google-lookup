@@ -11,7 +11,8 @@ import { createApi } from '@/api';
 export const DEFAULT_SETTINGS: Partial<GoogleLookupPluginSettings> = {
 	client_redirect_uri_port: '42601',
 	folder_person: '',
-	rename_person_file: true
+	rename_person_file: true,
+	person_insertion_mode: 'inline'
 };
 
 type CommonSettingParams = {
@@ -56,6 +57,7 @@ export class GoogleLookupSettingTab extends PluginSettingTab {
 			placeholder: '_assets/templates/t_person',
 			key: 'template_file_person'
 		});
+		this.insertPersonInsertionModeSetting();
 		this.insertToggleSetting({
 			name: 'Rename and move person file',
 			description:
@@ -201,6 +203,24 @@ export class GoogleLookupSettingTab extends PluginSettingTab {
 						}
 					}
 				});
+			});
+	}
+
+	private insertPersonInsertionModeSetting() {
+		new Setting(this.containerEl)
+			.setName('Contact insertion mode')
+			.setDesc('Choose how contact info should be inserted: inline (insert full template content) or link (create contact file and insert link)')
+			.addDropdown((dropdown) => {
+				dropdown
+					.addOption('inline', 'Inline content')
+					.addOption('link', 'Create file and insert link')
+					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+					.setValue(this.plugin.settings!.person_insertion_mode || 'inline')
+					.onChange(async (value: string) => {
+						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+						this.plugin.settings!.person_insertion_mode = value;
+						await this.plugin.saveSettings();
+					});
 			});
 	}
 

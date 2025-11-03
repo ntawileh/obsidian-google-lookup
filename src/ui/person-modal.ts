@@ -2,7 +2,7 @@ import { getPeopleService, searchContactsAndDirectory } from '@/api/google/peopl
 import { GoogleAccount } from '@/models/Account';
 import { App, Notice, SuggestModal } from 'obsidian';
 import { PersonResult } from '@/types';
-import { insertIntoEditorRange, maybeGetSelectedText, renameFile } from '@/utils';
+import { insertIntoEditorRange, maybeGetSelectedText, renameFile, createOrUpdatePersonFile } from '@/utils';
 import { Person } from '@/models/Person';
 import { AuthModal } from './auth-modal';
 
@@ -11,6 +11,7 @@ type ModalOptions = {
 	moveToFolder: string;
 	template: string | undefined;
 	newFilenameTemplate: string | undefined;
+	insertionMode: string; // 'inline' | 'link'
 };
 export class PersonSuggestModal extends SuggestModal<PersonResult> {
 	#initialQuery: string | undefined;
@@ -62,9 +63,19 @@ export class PersonSuggestModal extends SuggestModal<PersonResult> {
 	async onChooseSuggestion(person: PersonResult, evt: MouseEvent | KeyboardEvent) {
 		new Notice(`Inserted info for ${person.firstName}`);
 		const p = new Person(person, this.#options.template, this.#options.newFilenameTemplate);
-		insertIntoEditorRange(this.app, await p.generateFromTemplate(this.app));
-		if (this.#options.renameFile) {
-			await renameFile(app, p.getTitle(), this.#options.moveToFolder);
+		const content = await p.generateFromTemplate(this.app);
+
+		if (this.#options.insertionMode === 'link') {
+			// Create/update person file and insert link
+			const folder = this.#options.moveToFolder || '';
+			const link = await createOrUpdatePersonFile(this.app, p.getTitle(), content, folder);
+			insertIntoEditorRange(this.app, link);
+		} else {
+			// Original behavior: insert inline content
+			insertIntoEditorRange(this.app, content);
+			if (this.#options.renameFile) {
+				await renameFile(app, p.getTitle(), this.#options.moveToFolder);
+			}
 		}
 	}
 
