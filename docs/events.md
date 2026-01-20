@@ -45,6 +45,9 @@ Fields are variables enclosed in `{{` `}}` and will be replaced when the content
 | eventType      | The event type (e.g. default, focusTime)                                                                                                                                |
 | start          | The event start time                                                                                                                                                    |
 | end            | The event end time                                                                                                                                                      |
+| yyyy           | The event start year in 4-digit format (e.g. 2026)                                                                                                                     |
+| mm             | The event start month in 2-digit format (e.g. 01, 12)                                                                                                                  |
+| dd             | The event start day in 2-digit format (e.g. 01, 31)                                                                                                                    |
 | link           | This will produce a link to the Google calendar event. Useful to reference attachment in the event or other event info                                                  |
 | organizer      | The email of the event organizer                                                                                                                                        |
 | attendees      | Email(s) of all attendees, joined by `,`. If the attendee had declined the event, a `(x)` will appear near their email. A tentative response will have a `(?)` appended |
@@ -59,6 +62,29 @@ Fields are variables enclosed in `{{` `}}` and will be replaced when the content
 ### Customizing Template
 
 You can create your own template in a file, and include a link to that file in Settings for `Event Template`. For example, you can create a note in `_assets/templates/` called `t_event` and then provide the path `_assets/templates/t_event` in Settings
+
+## Insertion Modes
+
+The plugin supports two insertion modes for events:
+
+### Inline Mode (Default)
+The event information is inserted directly into the current note at the cursor position using the template.
+
+### Link Mode
+Creates a separate note for the event and inserts a link to that note. This mode provides several configuration options:
+
+#### Event Folder
+You can specify a folder where event notes will be created. The folder path supports template variables (e.g., `events/{{yyyy}}/{{mm}}` to organize by year and month).
+
+#### Filename Template
+When creating separate event files, the filename is generated using a template format. The default format is `{{summary}} - {{start}}`. 
+
+All template fields listed above are available for use in the filename template. For example:
+- `{{summary}} - {{start}}` (default)
+- `{{yyyy}}-{{mm}}-{{dd}} {{summary}}`
+- `Event {{id}} - {{summary}}`
+
+**Note**: The filename will be automatically sanitized to remove characters that are not valid in filenames.
 
 ## Notes
 
