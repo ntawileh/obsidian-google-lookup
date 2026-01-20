@@ -1,4 +1,4 @@
-import { DEFAULT_EVENT_TEMPLATE } from '@/settings/default-templates';
+import { DEFAULT_EVENT_TEMPLATE, DEFAULT_EVENT_FILENAME_FORMAT } from '@/settings/default-templates';
 import { EventResult } from '@/types';
 import { getTemplateContents } from '@/utils/template';
 import { App, moment } from 'obsidian';
@@ -7,11 +7,18 @@ export class Event {
 	#event: EventResult;
 	#template: string | undefined;
 	#dateFormat: string | undefined;
+	#filenameTemplate: string | undefined;
 
-	constructor(e: EventResult, templateFile: string | undefined, dateFormat: string | undefined) {
+	constructor(
+		e: EventResult,
+		templateFile: string | undefined,
+		dateFormat: string | undefined,
+		filenameTemplate: string | undefined
+	) {
 		this.#event = e;
 		this.#template = templateFile;
 		this.#dateFormat = dateFormat;
+		this.#filenameTemplate = filenameTemplate;
 	}
 
 	generateFromTemplate = async (app: App) => {
@@ -34,6 +41,9 @@ export class Event {
 			description: this.#event.description,
 			start: startMoment.format(this.#dateFormat ?? 'ddd, MMM Do @ hh:mma'),
 			end: endMoment.isValid() ? endMoment.format(this.#dateFormat ?? 'ddd, MMM Do @ hh:mma') : '',
+			yyyy: startMoment.format('YYYY'),
+			mm: startMoment.format('MM'),
+			dd: startMoment.format('DD'),
 			link: this.#event.htmlLink,
 			organizer: this.#event.organizer,
 			attendees: this.#event.attendees
@@ -58,18 +68,21 @@ export class Event {
 					return `- [${att.title ?? 'Attachment'}](${att.fileUrl})${
 						att.mimeType ? ' (' + att.mimeType + ')' : ''
 					}${att.iconUrl ? ` ![](${att.iconUrl})` : ''}`;
-				}).join('\n'),
+				})
+				.join('\n'),
 			conference: this.#event.conferenceData
 				? this.#event.conferenceData.entryPoints
-					.map((ep) => {
-						return `- [${ep.label ?? 'Link'}](${ep.uri}) (${ep.entryPointType})`;
-					}).join('\n')
+						.map((ep) => {
+							return `- [${ep.label ?? 'Link'}](${ep.uri}) (${ep.entryPointType})`;
+						})
+						.join('\n')
 				: '',
 			'conference.solution': this.#event.conferenceData?.solutionName ?? '',
 			json: JSON.stringify(this.#event, null, 2)
 		};
 
 		for (const [k, v] of Object.entries(transform)) {
+			// eslint-disable-next-line no-useless-escape
 			templateContents = templateContents.replace(new RegExp(`{{\s*${k}\s*}}`, 'gi'), v);
 		}
 		templateContents = templateContents
@@ -77,5 +90,17 @@ export class Event {
 			.replace(/{{\s*time\s*}}/gi, now.format('HH:mm'));
 
 		return templateContents;
+	};
+
+	getTitle = () => {
+		return this.applyTemplateTransformations(
+			this.#filenameTemplate && this.#filenameTemplate.length > 0
+				? this.#filenameTemplate
+				: DEFAULT_EVENT_FILENAME_FORMAT
+		);
+	};
+
+	getFolderTransform = (folder: string) => {
+		return this.applyTemplateTransformations(folder);
 	};
 }

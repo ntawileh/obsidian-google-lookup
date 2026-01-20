@@ -2,13 +2,16 @@ import { getCalendarService, searchCalendarEvents } from '@/api/google/calendar-
 import { GoogleAccount } from '@/models/Account';
 import { App, moment, Notice, SuggestModal } from 'obsidian';
 import { EventResult } from '@/types';
-import { insertIntoEditorRange, maybeGetSelectedText } from '@/utils';
+import { insertIntoEditorRange, maybeGetSelectedText, createOrUpdateFile } from '@/utils';
 import { Event } from '@/models/Event';
 import { AuthModal } from './auth-modal';
 
 type ModalOptions = {
 	template: string | undefined;
 	dateFormat: string | undefined;
+	moveToFolder: string | undefined;
+	insertionMode: string; // 'inline' | 'link'
+	newFilenameTemplate: string | undefined;
 };
 export class EventSuggestModal extends SuggestModal<EventResult> {
 	#initialQuery: moment.Moment;
@@ -59,8 +62,18 @@ export class EventSuggestModal extends SuggestModal<EventResult> {
 
 	async onChooseSuggestion(event: EventResult, evt: MouseEvent | KeyboardEvent) {
 		new Notice(`Inserted info for ${event.summary}`);
-		const e = new Event(event, this.#options.template, this.#options.dateFormat);
-		insertIntoEditorRange(this.app, await e.generateFromTemplate(this.app));
+		const e = new Event(event, this.#options.template, this.#options.dateFormat, this.#options.newFilenameTemplate);
+		const content = await e.generateFromTemplate(this.app);
+
+		if (this.#options.insertionMode === 'link') {
+			// Create/update person file and insert link
+			const folder = e.getFolderTransform(this.#options.moveToFolder || '');
+			const link = await createOrUpdateFile(this.app, e.getTitle(), content, folder);
+			insertIntoEditorRange(this.app, link);
+		} else {
+			// Original behavior: insert inline content
+			insertIntoEditorRange(this.app, content);
+		}
 	}
 
 	private async initServices() {

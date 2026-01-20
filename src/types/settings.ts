@@ -11,4 +11,7 @@ export type GoogleLookupPluginSettings = {
 	event_date_format: string;
 	rename_person_file: boolean;
 	person_insertion_mode: string; // 'inline' | 'link'
+	event_insertion_mode: string; // 'inline' | 'link'
+	folder_event: string;
+	event_filename_format: string;
 };
