@@ -47,16 +47,11 @@ const sanitizeHeading = (text: string) => {
 };
 
 /**
- * Creates a person file in the specified folder if it doesn't exist.
+ * Creates a file in the specified folder if it doesn't exist.
  * Returns the wiki link to the file.
  * If file already exists, it will NOT be modified - just returns the link.
  */
-export const createOrUpdatePersonFile = async (
-	app: App,
-	title: string,
-	content: string,
-	folder: string
-): Promise<string> => {
+export const createOrUpdateFile = async (app: App, title: string, content: string, folder: string): Promise<string> => {
 	const fileName = sanitizeHeading(title);
 	const filePath = normalizePath(`${folder}/${fileName}.md`);
 
@@ -84,7 +79,7 @@ export const createOrUpdatePersonFile = async (
 		// Return wiki link to the file
 		return `[[${fileName}]]`;
 	} catch (err: any) {
-		console.error('Error creating person file:', err);
+		console.error('Error creating file:', err);
 		new Notice(`Error: ${err.message}`, 7000);
 		// Return a fallback - just the title
 		return title;

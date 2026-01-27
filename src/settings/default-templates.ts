@@ -1,4 +1,5 @@
 export const DEFAULT_PERSON_FILENAME_FORMAT = '{{lastname}}, {{firstname}}';
+export const DEFAULT_EVENT_FILENAME_FORMAT = '{{summary}} - {{start}}';
 
 export const DEFAULT_PERSON_TEMPLATE = `
 ---

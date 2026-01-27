@@ -2,7 +2,7 @@ import { getPeopleService, searchContactsAndDirectory } from '@/api/google/peopl
 import { GoogleAccount } from '@/models/Account';
 import { App, Notice, SuggestModal } from 'obsidian';
 import { PersonResult } from '@/types';
-import { insertIntoEditorRange, maybeGetSelectedText, renameFile, createOrUpdatePersonFile } from '@/utils';
+import { insertIntoEditorRange, maybeGetSelectedText, renameFile, createOrUpdateFile } from '@/utils';
 import { Person } from '@/models/Person';
 import { AuthModal } from './auth-modal';
 
@@ -68,7 +68,7 @@ export class PersonSuggestModal extends SuggestModal<PersonResult> {
 		if (this.#options.insertionMode === 'link') {
 			// Create/update person file and insert link
 			const folder = this.#options.moveToFolder || '';
-			const link = await createOrUpdatePersonFile(this.app, p.getTitle(), content, folder);
+			const link = await createOrUpdateFile(this.app, p.getTitle(), content, folder);
 			insertIntoEditorRange(this.app, link);
 		} else {
 			// Original behavior: insert inline content

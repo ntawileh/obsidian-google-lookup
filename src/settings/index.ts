@@ -11,8 +11,10 @@ import { createApi } from '@/api';
 export const DEFAULT_SETTINGS: Partial<GoogleLookupPluginSettings> = {
 	client_redirect_uri_port: '42601',
 	folder_person: '',
+	folder_event: '',
 	rename_person_file: true,
-	person_insertion_mode: 'inline'
+	person_insertion_mode: 'inline',
+	event_insertion_mode: 'inline'
 };
 
 type CommonSettingParams = {
@@ -99,6 +101,27 @@ export class GoogleLookupSettingTab extends PluginSettingTab {
 			description: 'Date format to be used on the start date field.',
 			placeholder: 'ddd, MMM Do @ hh:mma',
 			key: 'event_date_format'
+		});
+		this.insertEventInsertionModeSetting();
+
+		this.insertTextInputSetting({
+			name: 'Folder for event notes',
+			description:
+				'When the option to create and insert a separate note for events is selected, the event note will move to this folder.  An empty value (default) means the file will not move to any new directory',
+
+			placeholder: 'events',
+			key: 'folder_event'
+		});
+		this.insertTextInputSetting({
+			name: 'Filename format for event notes',
+			description: getDocumentFragmentWithLink(
+				'When the option to create and insert a separate note for events is selected, the event note will have a title based on this format.  Default value is "{{summary}}, {{start}}".  See template options',
+				'here',
+				'https://ntawileh.github.io/obsidian-google-lookup/event'
+			),
+
+			placeholder: '{{summary}}, {{start}}',
+			key: 'event_filename_format'
 		});
 
 		containerEl.createEl('h3', { text: 'Google Client' });
@@ -209,7 +232,9 @@ export class GoogleLookupSettingTab extends PluginSettingTab {
 	private insertPersonInsertionModeSetting() {
 		new Setting(this.containerEl)
 			.setName('Contact insertion mode')
-			.setDesc('Choose how contact info should be inserted: inline (insert full template content) or link (create contact file and insert link)')
+			.setDesc(
+				'Choose how contact info should be inserted: inline (insert full template content) or link (create contact file and insert link)'
+			)
 			.addDropdown((dropdown) => {
 				dropdown
 					.addOption('inline', 'Inline content')
@@ -219,6 +244,26 @@ export class GoogleLookupSettingTab extends PluginSettingTab {
 					.onChange(async (value: string) => {
 						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 						this.plugin.settings!.person_insertion_mode = value;
+						await this.plugin.saveSettings();
+					});
+			});
+	}
+
+	private insertEventInsertionModeSetting() {
+		new Setting(this.containerEl)
+			.setName('Event insertion mode')
+			.setDesc(
+				'Choose how event info should be inserted: inline (insert full template content) or link (create event file and insert link)'
+			)
+			.addDropdown((dropdown) => {
+				dropdown
+					.addOption('inline', 'Inline content')
+					.addOption('link', 'Create file and insert link')
+					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+					.setValue(this.plugin.settings!.event_insertion_mode || 'inline')
+					.onChange(async (value: string) => {
+						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+						this.plugin.settings!.event_insertion_mode = value;
 						await this.plugin.saveSettings();
 					});
 			});
