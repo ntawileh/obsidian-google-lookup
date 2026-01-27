@@ -44,7 +44,9 @@ export class AuthModal extends Modal {
 		contentEl.createEl('h3', {
 			text: `login to Google account ${this.#account.accountName === 'NEW_ACCOUNT' ? '' : this.#account.accountName}`
 		});
-		contentEl.createEl('a', { text: `click here to authenticate`, href: url });
+		contentEl
+			.createEl('button', { text: 'Click here to authenticate' })
+			.addEventListener('click', () => window.open(url, '_blank'));
 
 		contentEl.createEl('p', {
 			text: 'This popup will close automatically if you are successfully authenticated.  Click on the link above and follow instructions to log in.'
