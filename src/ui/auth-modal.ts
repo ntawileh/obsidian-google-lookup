@@ -22,7 +22,7 @@ export class AuthModal extends Modal {
 		const url = await getAuthURL(GoogleAccount.credentials);
 		this.#server = http
 			.createServer(async (req, res) => {
-				const re = /\/\?code=(\d\/[\w|-]*)&/;
+				const re = /[?&]code=([\w/-]+)/;
 				if (req.url) {
 					const url = req.url.replace('%2F', '/');
 					const match = url.match(re);
